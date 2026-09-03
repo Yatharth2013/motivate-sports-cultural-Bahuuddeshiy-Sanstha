@@ -1,14 +1,17 @@
 /* =========================================================
    RAY SPORTS CLUB — ADMIN PANEL
-   Supabase Admin JavaScript
+   Supabase Admin Dashboard
    ========================================================= */
 
+
 /* =========================================================
-   SUPABASE CONFIGURATION
+   SUPABASE CONFIG
    ========================================================= */
 
 const SUPABASE_URL = "https://xkdqxtxfkgbrmbotazel.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
 
 const { createClient } = supabase;
 
@@ -16,6 +19,7 @@ const db = createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
+
 
 /* =========================================================
    GLOBAL VARIABLES
@@ -37,7 +41,10 @@ let currentSection = "dashboard";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+    console.log("=================================");
     console.log("Ray Sports Club Admin Panel Loaded");
+    console.log("Supabase client:", db);
+    console.log("=================================");
 
     setupNavigation();
     setupLogout();
@@ -49,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 /* =========================================================
-   ADMIN SESSION
+   CHECK ADMIN SESSION
    ========================================================= */
 
 async function checkAdminSession() {
@@ -57,31 +64,41 @@ async function checkAdminSession() {
     try {
 
         const {
-            data: { session },
+            data,
             error
         } = await db.auth.getSession();
 
         if (error) {
-            console.error(error);
+            console.error("Session error:", error);
+            showLoginScreen();
             return;
         }
 
-        if (!session) {
+        const session = data?.session;
+
+        if (session) {
+
+            console.log("Existing admin session found.");
+
+            currentAdmin = session.user;
+
+            showAdminPanel();
+
+            await loadAllData();
+
+        } else {
+
+            console.log("No admin session.");
 
             showLoginScreen();
 
-            return;
         }
-
-        currentAdmin = session.user;
-
-        showAdminPanel();
-
-        await loadAllData();
 
     } catch (error) {
 
-        console.error("Session error:", error);
+        console.error("CHECK SESSION ERROR:", error);
+
+        showLoginScreen();
 
     }
 
@@ -89,7 +106,7 @@ async function checkAdminSession() {
 
 
 /* =========================================================
-   SHOW LOGIN
+   SHOW LOGIN SCREEN
    ========================================================= */
 
 function showLoginScreen() {
@@ -106,6 +123,7 @@ function showLoginScreen() {
     }
 
 }
+
 
 /* =========================================================
    SHOW ADMIN PANEL
@@ -139,81 +157,160 @@ async function adminLogin(event) {
         event.preventDefault();
     }
 
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const message = document.getElementById("loginMessage");
+    const emailInput =
+        document.getElementById("email");
 
-    const email = emailInput?.value.trim();
-    const password = passwordInput?.value;
+    const passwordInput =
+        document.getElementById("password");
+
+    const message =
+        document.getElementById("loginMessage");
+
+    const button =
+        document.getElementById("loginBtn");
+
+
+    const email =
+        emailInput?.value.trim();
+
+    const password =
+        passwordInput?.value;
+
+
+    /* ---------- VALIDATION ---------- */
 
     if (!email || !password) {
 
         if (message) {
-            message.textContent = "Please enter email and password.";
-            message.className = "message error";
+
+            message.textContent =
+                "Please enter email and password.";
+
+            message.className =
+                "message error";
+
         }
 
         return;
+
     }
+
 
     try {
 
-        const button = document.getElementById("loginBtn");
-
         if (button) {
+
             button.disabled = true;
-            button.textContent = "⏳ Logging in...";
+
+            button.textContent =
+                "⏳ Logging in...";
+
         }
 
-        console.log("Attempting Supabase login:", email);
+
+        if (message) {
+
+            message.textContent =
+                "Checking login...";
+
+            message.className =
+                "message";
+
+        }
+
+
+        console.log(
+            "Attempting Supabase login:",
+            email
+        );
+
+
+        /* ---------- SUPABASE LOGIN ---------- */
 
         const {
             data,
             error
         } = await db.auth.signInWithPassword({
+
             email: email,
+
             password: password
+
         });
 
+
         if (error) {
+
             throw error;
+
         }
 
-        console.log("Login successful:", data.user);
 
-        currentAdmin = data.user;
+        console.log(
+            "Login successful:",
+            data.user
+        );
+
+
+        currentAdmin =
+            data.user;
+
 
         if (message) {
-            message.textContent = "Login successful!";
-            message.className = "message success";
+
+            message.textContent =
+                "Login successful!";
+
+            message.className =
+                "message success";
+
         }
+
+
+        /* ---------- SHOW ADMIN ---------- */
 
         showAdminPanel();
 
+
+        /* ---------- LOAD DATA ---------- */
+
         await loadAllData();
+
 
     } catch (error) {
 
-        console.error("LOGIN ERROR:", error);
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
+
 
         if (message) {
+
             message.textContent =
-                error.message || "Login failed.";
-            message.className = "message error";
+                error.message ||
+                "Login failed.";
+
+            message.className =
+                "message error";
+
         }
 
     } finally {
 
-        const button = document.getElementById("loginBtn");
-
         if (button) {
+
             button.disabled = false;
-            button.textContent = "🔐 Login";
+
+            button.textContent =
+                "🔐 Login";
+
         }
 
     }
 
 }
+
 
 /* =========================================================
    LOGOUT
@@ -228,27 +325,55 @@ async function logout() {
         } = await db.auth.signOut();
 
         if (error) {
+
             throw error;
+
         }
 
         currentAdmin = null;
 
+        members = [];
+        bookings = [];
+        payments = [];
+        trainers = [];
+
+        showLoginScreen();
+
+        const message =
+            document.getElementById("loginMessage");
+
+        if (message) {
+
+            message.textContent =
+                "";
+
+            message.className =
+                "message";
+
+        }
+
+        const password =
+            document.getElementById("password");
+
+        if (password) {
+            password.value = "";
+        }
+
+
         showToast(
-            "Logged out successfully.",
-            "success"
+            "Logged out successfully."
         );
 
-        setTimeout(() => {
-            showLoginScreen();
-        }, 500);
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOGOUT ERROR:",
+            error
+        );
 
         showToast(
-            "Unable to logout.",
-            "error"
+            "Logout failed."
         );
 
     }
@@ -257,7 +382,198 @@ async function logout() {
 
 
 /* =========================================================
-   ADMIN INFO
+   SETUP FORMS
+   ========================================================= */
+
+function setupForms() {
+
+    const loginButton =
+        document.getElementById("loginBtn");
+
+
+    if (loginButton) {
+
+        loginButton.addEventListener(
+            "click",
+            adminLogin
+        );
+
+        console.log(
+            "Login button handler attached."
+        );
+
+    } else {
+
+        console.warn(
+            "Login button #loginBtn not found."
+        );
+
+    }
+
+
+    /* Allow ENTER key to login */
+
+    const email =
+        document.getElementById("email");
+
+    const password =
+        document.getElementById("password");
+
+
+    [email, password].forEach(input => {
+
+        if (!input) return;
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    adminLogin(event);
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   LOGOUT BUTTON
+   ========================================================= */
+
+function setupLogout() {
+
+    const logoutButtons =
+        document.querySelectorAll(
+            "#logoutBtn, .logout-btn"
+        );
+
+
+    logoutButtons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            logout
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function setupNavigation() {
+
+    const navButtons =
+        document.querySelectorAll(
+            "[data-section]"
+        );
+
+
+    navButtons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const section =
+                    button.dataset.section;
+
+                if (section) {
+
+                    switchSection(
+                        section
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   SWITCH SECTION
+   ========================================================= */
+
+function switchSection(sectionName) {
+
+    currentSection =
+        sectionName;
+
+
+    const sections =
+        document.querySelectorAll(
+            ".admin-section, .page-section"
+        );
+
+
+    sections.forEach(section => {
+
+        section.style.display =
+            "none";
+
+    });
+
+
+    const target =
+        document.getElementById(
+            sectionName
+        );
+
+
+    if (target) {
+
+        target.style.display =
+            "block";
+
+    }
+
+
+    const navItems =
+        document.querySelectorAll(
+            "[data-section]"
+        );
+
+
+    navItems.forEach(item => {
+
+        item.classList.remove(
+            "active"
+        );
+
+
+        if (
+            item.dataset.section ===
+            sectionName
+        ) {
+
+            item.classList.add(
+                "active"
+            );
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   UPDATE ADMIN INFO
    ========================================================= */
 
 function updateAdminInfo() {
@@ -266,20 +582,36 @@ function updateAdminInfo() {
         return;
     }
 
-    const emailElements = [
-        "adminEmailDisplay",
-        "loggedInEmail",
-        "adminEmailText"
+
+    const email =
+        currentAdmin.email ||
+        "Administrator";
+
+
+    const elements = [
+
+        document.getElementById(
+            "adminEmailDisplay"
+        ),
+
+        document.getElementById(
+            "loggedInEmail"
+        ),
+
+        document.getElementById(
+            "adminEmailText"
+        )
+
     ];
 
-    emailElements.forEach(id => {
 
-        const element =
-            document.getElementById(id);
+    elements.forEach(element => {
 
         if (element) {
+
             element.textContent =
-                currentAdmin.email || "Administrator";
+                email;
+
         }
 
     });
@@ -293,14 +625,25 @@ function updateAdminInfo() {
 
 async function loadAllData() {
 
+    console.log(
+        "Loading admin data..."
+    );
+
+
     await Promise.all([
+
         loadMembers(),
+
         loadBookings(),
+
         loadPayments(),
+
         loadTrainers()
+
     ]);
 
-    updateDashboard();
+
+    renderDashboard();
 
 }
 
@@ -319,29 +662,45 @@ async function loadMembers() {
         } = await db
             .from("members")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
+
             console.error(
                 "Members error:",
                 error
             );
 
-            members = [];
-
             return;
+
         }
 
-        members = data || [];
+
+        members =
+            data || [];
+
+
+        console.log(
+            "Members loaded:",
+            members.length
+        );
+
 
         renderMembers();
-        updateMemberStats();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOAD MEMBERS ERROR:",
+            error
+        );
 
     }
 
@@ -362,9 +721,13 @@ async function loadBookings() {
         } = await db
             .from("bookings")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
 
@@ -373,19 +736,30 @@ async function loadBookings() {
                 error
             );
 
-            bookings = [];
-
             return;
+
         }
 
-        bookings = data || [];
+
+        bookings =
+            data || [];
+
+
+        console.log(
+            "Bookings loaded:",
+            bookings.length
+        );
+
 
         renderBookings();
-        updateBookingStats();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOAD BOOKINGS ERROR:",
+            error
+        );
 
     }
 
@@ -406,9 +780,13 @@ async function loadPayments() {
         } = await db
             .from("payments")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
 
@@ -417,19 +795,30 @@ async function loadPayments() {
                 error
             );
 
-            payments = [];
-
             return;
+
         }
 
-        payments = data || [];
+
+        payments =
+            data || [];
+
+
+        console.log(
+            "Payments loaded:",
+            payments.length
+        );
+
 
         renderPayments();
-        updatePaymentStats();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOAD PAYMENTS ERROR:",
+            error
+        );
 
     }
 
@@ -450,9 +839,13 @@ async function loadTrainers() {
         } = await db
             .from("trainers")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
 
         if (error) {
 
@@ -461,18 +854,30 @@ async function loadTrainers() {
                 error
             );
 
-            trainers = [];
-
             return;
+
         }
 
-        trainers = data || [];
+
+        trainers =
+            data || [];
+
+
+        console.log(
+            "Trainers loaded:",
+            trainers.length
+        );
+
 
         renderTrainers();
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOAD TRAINERS ERROR:",
+            error
+        );
 
     }
 
@@ -480,173 +885,89 @@ async function loadTrainers() {
 
 
 /* =========================================================
-   DASHBOARD
+   RENDER DASHBOARD
    ========================================================= */
 
-function updateDashboard() {
+function renderDashboard() {
+
+    updateStatistics();
+
+}
+
+
+/* =========================================================
+   UPDATE STATISTICS
+   ========================================================= */
+
+function updateStatistics() {
+
+    const memberCount =
+        members.length;
+
+
+    const bookingCount =
+        bookings.length;
+
+
+    const paymentCount =
+        payments.length;
+
+
+    const trainerCount =
+        trainers.length;
+
+
+    setText(
+        "memberCount",
+        memberCount
+    );
+
+    setText(
+        "membersCount",
+        memberCount
+    );
 
     setText(
         "totalMembers",
-        members.length
+        memberCount
+    );
+
+
+    setText(
+        "bookingCount",
+        bookingCount
+    );
+
+    setText(
+        "bookingsCount",
+        bookingCount
     );
 
     setText(
         "totalBookings",
-        bookings.length
+        bookingCount
+    );
+
+
+    setText(
+        "paymentCount",
+        paymentCount
     );
 
     setText(
-        "totalPayments",
-        payments.length
+        "paymentsCount",
+        paymentCount
+    );
+
+
+    setText(
+        "trainerCount",
+        trainerCount
     );
 
     setText(
-        "totalTrainers",
-        trainers.length
-    );
-
-    calculateRevenue();
-
-}
-
-
-/* =========================================================
-   MEMBER STATS
-   ========================================================= */
-
-function updateMemberStats() {
-
-    const activeMembers =
-        members.filter(member => {
-
-            const status =
-                String(
-                    member.status || ""
-                ).toLowerCase();
-
-            return (
-                status === "active" ||
-                status === "approved"
-            );
-
-        });
-
-    const inactiveMembers =
-        members.filter(member => {
-
-            const status =
-                String(
-                    member.status || ""
-                ).toLowerCase();
-
-            return (
-                status === "inactive" ||
-                status === "expired"
-            );
-
-        });
-
-    setText(
-        "activeMembers",
-        activeMembers.length
-    );
-
-    setText(
-        "inactiveMembers",
-        inactiveMembers.length
-    );
-
-}
-
-
-/* =========================================================
-   BOOKING STATS
-   ========================================================= */
-
-function updateBookingStats() {
-
-    const pending =
-        bookings.filter(
-            booking =>
-                String(
-                    booking.status || ""
-                ).toLowerCase() === "pending"
-        );
-
-    const confirmed =
-        bookings.filter(
-            booking =>
-                String(
-                    booking.status || ""
-                ).toLowerCase() === "confirmed"
-        );
-
-    setText(
-        "pendingBookings",
-        pending.length
-    );
-
-    setText(
-        "confirmedBookings",
-        confirmed.length
-    );
-
-}
-
-
-/* =========================================================
-   PAYMENT STATS
-   ========================================================= */
-
-function updatePaymentStats() {
-
-    const total =
-        payments.reduce(
-            (sum, payment) =>
-                sum +
-                Number(
-                    payment.amount || 0
-                ),
-            0
-        );
-
-    setText(
-        "totalRevenue",
-        formatCurrency(total)
-    );
-
-}
-
-
-/* =========================================================
-   CALCULATE REVENUE
-   ========================================================= */
-
-function calculateRevenue() {
-
-    const revenue =
-        payments.reduce(
-            (total, payment) => {
-
-                return (
-                    total +
-                    Number(
-                        payment.amount || 0
-                    )
-                );
-
-            },
-            0
-        );
-
-    setText(
-        "revenue",
-        formatCurrency(revenue)
-    );
-
-    setText(
-        "totalRevenue",
-        formatCurrency(revenue)
+        "trainersCount",
+        trainerCount
     );
 
 }
@@ -656,191 +977,377 @@ function calculateRevenue() {
    RENDER MEMBERS
    ========================================================= */
 
-function renderMembers(list = members) {
+function renderMembers() {
 
     const table =
-        document.getElementById("membersTable");
+        document.getElementById(
+            "membersTable"
+        );
+
 
     if (!table) {
         return;
     }
 
-    if (!list.length) {
+
+    if (!members.length) {
 
         table.innerHTML = `
             <tr>
-                <td colspan="100%" class="empty-state">
-                    No members found
+                <td colspan="10">
+                    No members found.
                 </td>
             </tr>
         `;
 
         return;
+
     }
+
 
     table.innerHTML =
-        list.map((member, index) => {
+        members.map(
+            (member, index) => {
 
-            const name =
-                member.name ||
-                member.full_name ||
-                "Unknown";
+                return `
+                    <tr>
 
-            const phone =
-                member.phone ||
-                member.mobile ||
-                "-";
+                        <td>
+                            ${index + 1}
+                        </td>
 
-            const email =
-                member.email ||
-                "-";
+                        <td>
+                            ${escapeHTML(
+                                member.name ||
+                                "-"
+                            )}
+                        </td>
 
-            const status =
-                member.status ||
-                "Active";
+                        <td>
+                            ${escapeHTML(
+                                member.email ||
+                                "-"
+                            )}
+                        </td>
 
-            return `
-                <tr>
+                        <td>
+                            ${escapeHTML(
+                                member.phone ||
+                                "-"
+                            )}
+                        </td>
 
-                    <td>${index + 1}</td>
+                        <td>
+                            ${escapeHTML(
+                                member.membership_type ||
+                                member.membership ||
+                                "-"
+                            )}
+                        </td>
 
-                    <td>
-                        <strong>
-                            ${escapeHTML(name)}
-                        </strong>
-                    </td>
+                        <td>
+                            ${formatDate(
+                                member.created_at
+                            )}
+                        </td>
 
-                    <td>
-                        ${escapeHTML(phone)}
-                    </td>
+                        <td>
+                            <button
+                                class="delete-btn"
+                                onclick="deleteMember('${member.id}')"
+                            >
+                                🗑️ Delete
+                            </button>
+                        </td>
 
-                    <td>
-                        ${escapeHTML(email)}
-                    </td>
+                    </tr>
+                `;
 
-                    <td>
-                        <span class="status-badge ${getStatusClass(status)}">
-                            ${escapeHTML(status)}
-                        </span>
-                    </td>
-
-                    <td>
-                        <button
-                            class="action-btn view-btn"
-                            onclick="viewMember('${member.id}')">
-                            View
-                        </button>
-
-                        <button
-                            class="action-btn delete-btn"
-                            onclick="deleteMember('${member.id}')">
-                            Delete
-                        </button>
-                    </td>
-
-                </tr>
-            `;
-
-        }).join("");
+            }
+        ).join("");
 
 }
 
 
 /* =========================================================
-   SEARCH MEMBERS
+   RENDER BOOKINGS
    ========================================================= */
 
-function searchMembers() {
+function renderBookings() {
 
-    const input =
+    const table =
         document.getElementById(
-            "memberSearch"
+            "bookingsTable"
         );
 
-    if (!input) {
+
+    if (!table) {
         return;
     }
 
-    const search =
-        input.value
-            .trim()
-            .toLowerCase();
 
-    const filtered =
-        members.filter(member => {
+    if (!bookings.length) {
 
-            const text =
-                `${member.name || ""}
-                 ${member.full_name || ""}
-                 ${member.email || ""}
-                 ${member.phone || ""}
-                 ${member.mobile || ""}`
-                    .toLowerCase();
+        table.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No bookings found.
+                </td>
+            </tr>
+        `;
 
-            return text.includes(search);
+        return;
 
-        });
+    }
 
-    renderMembers(filtered);
+
+    table.innerHTML =
+        bookings.map(
+            (booking, index) => {
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                booking.name ||
+                                booking.member_name ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                booking.date ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                booking.time ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                booking.court ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                booking.status ||
+                                "Pending"
+                            )}
+                        </td>
+
+                        <td>
+                            <button
+                                class="delete-btn"
+                                onclick="deleteBooking('${booking.id}')"
+                            >
+                                🗑️ Delete
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            }
+        ).join("");
 
 }
 
 
 /* =========================================================
-   VIEW MEMBER
+   RENDER PAYMENTS
    ========================================================= */
 
-function viewMember(id) {
+function renderPayments() {
 
-    const member =
-        members.find(
-            item => String(item.id) === String(id)
+    const table =
+        document.getElementById(
+            "paymentsTable"
         );
 
-    if (!member) {
+
+    if (!table) {
         return;
     }
 
-    const modal =
-        document.getElementById("memberModal");
 
-    if (!modal) {
+    if (!payments.length) {
 
-        alert(
-            `Name: ${member.name || member.full_name || "-"}
-Email: ${member.email || "-"}
-Phone: ${member.phone || "-"}
-Status: ${member.status || "-"}`
+        table.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No payments found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML =
+        payments.map(
+            (payment, index) => {
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                payment.name ||
+                                payment.member_name ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ₹${formatMoney(
+                                payment.amount
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                payment.payment_method ||
+                                payment.method ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                payment.status ||
+                                "Paid"
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatDate(
+                                payment.created_at
+                            )}
+                        </td>
+
+                        <td>
+                            <button
+                                class="delete-btn"
+                                onclick="deletePayment('${payment.id}')"
+                            >
+                                🗑️ Delete
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   RENDER TRAINERS
+   ========================================================= */
+
+function renderTrainers() {
+
+    const table =
+        document.getElementById(
+            "trainersTable"
         );
 
+
+    if (!table) {
         return;
     }
 
-    setText(
-        "modalMemberName",
-        member.name ||
-        member.full_name ||
-        "-"
-    );
 
-    setText(
-        "modalMemberEmail",
-        member.email || "-"
-    );
+    if (!trainers.length) {
 
-    setText(
-        "modalMemberPhone",
-        member.phone ||
-        member.mobile ||
-        "-"
-    );
+        table.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No trainers found.
+                </td>
+            </tr>
+        `;
 
-    setText(
-        "modalMemberStatus",
-        member.status || "-"
-    );
+        return;
 
-    modal.classList.add("active");
+    }
+
+
+    table.innerHTML =
+        trainers.map(
+            (trainer, index) => {
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                trainer.name ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                trainer.specialization ||
+                                trainer.experience ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                trainer.phone ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(
+                                trainer.email ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            <button
+                                class="delete-btn"
+                                onclick="deleteTrainer('${trainer.id}')"
+                            >
+                                🗑️ Delete
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            }
+        ).join("");
 
 }
 
@@ -851,14 +1358,16 @@ Status: ${member.status || "-"}`
 
 async function deleteMember(id) {
 
-    const confirmed =
-        confirm(
+    if (
+        !confirm(
             "Are you sure you want to delete this member?"
-        );
+        )
+    ) {
 
-    if (!confirmed) {
         return;
+
     }
+
 
     try {
 
@@ -867,28 +1376,38 @@ async function deleteMember(id) {
         } = await db
             .from("members")
             .delete()
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
+
 
         if (error) {
+
             throw error;
+
         }
 
+
         showToast(
-            "Member deleted successfully.",
-            "success"
+            "Member deleted."
         );
 
+
         await loadMembers();
-        updateDashboard();
+
+        updateStatistics();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "DELETE MEMBER ERROR:",
+            error
+        );
 
         showToast(
-            error.message ||
-            "Unable to delete member.",
-            "error"
+            "Could not delete member."
         );
 
     }
@@ -897,98 +1416,190 @@ async function deleteMember(id) {
 
 
 /* =========================================================
-   RENDER BOOKINGS
+   DELETE BOOKING
    ========================================================= */
 
-function renderBookings(list = bookings) {
+async function deleteBooking(id) {
 
-    const table =
-        document.getElementById(
-            "bookingsTable"
+    if (
+        !confirm(
+            "Are you sure you want to delete this booking?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await db
+            .from("bookings")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        showToast(
+            "Booking deleted."
         );
 
-    if (!table) {
-        return;
+
+        await loadBookings();
+
+        updateStatistics();
+
+
+    } catch (error) {
+
+        console.error(
+            "DELETE BOOKING ERROR:",
+            error
+        );
+
+        showToast(
+            "Could not delete booking."
+        );
+
     }
 
-    if (!list.length) {
+}
 
-        table.innerHTML = `
-            <tr>
-                <td colspan="100%" class="empty-state">
-                    No bookings found
-                </td>
-            </tr>
-        `;
+
+/* =========================================================
+   DELETE PAYMENT
+   ========================================================= */
+
+async function deletePayment(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this payment?"
+        )
+    ) {
 
         return;
+
     }
 
-    table.innerHTML =
-        list.map((booking, index) => {
 
-            const name =
-                booking.member_name ||
-                booking.name ||
-                "Unknown";
+    try {
 
-            const date =
-                booking.date ||
-                booking.booking_date ||
-                "-";
+        const {
+            error
+        } = await db
+            .from("payments")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
 
-            const time =
-                booking.time ||
-                booking.booking_time ||
-                "-";
 
-            const status =
-                booking.status ||
-                "Pending";
+        if (error) {
 
-            return `
-                <tr>
+            throw error;
 
-                    <td>${index + 1}</td>
+        }
 
-                    <td>
-                        ${escapeHTML(name)}
-                    </td>
 
-                    <td>
-                        ${escapeHTML(date)}
-                    </td>
+        showToast(
+            "Payment deleted."
+        );
 
-                    <td>
-                        ${escapeHTML(time)}
-                    </td>
 
-                    <td>
-                        <span class="status-badge ${getStatusClass(status)}">
-                            ${escapeHTML(status)}
-                        </span>
-                    </td>
+        await loadPayments();
 
-                    <td>
+        updateStatistics();
 
-                        <button
-                            class="action-btn confirm-btn"
-                            onclick="updateBookingStatus('${booking.id}', 'confirmed')">
-                            Confirm
-                        </button>
 
-                        <button
-                            class="action-btn delete-btn"
-                            onclick="deleteBooking('${booking.id}')">
-                            Delete
-                        </button>
+    } catch (error) {
 
-                    </td>
+        console.error(
+            "DELETE PAYMENT ERROR:",
+            error
+        );
 
-                </tr>
-            `;
+        showToast(
+            "Could not delete payment."
+        );
 
-        }).join("");
+    }
+
+}
+
+
+/* =========================================================
+   DELETE TRAINER
+   ========================================================= */
+
+async function deleteTrainer(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this trainer?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await db
+            .from("trainers")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        showToast(
+            "Trainer deleted."
+        );
+
+
+        await loadTrainers();
+
+        updateStatistics();
+
+
+    } catch (error) {
+
+        console.error(
+            "DELETE TRAINER ERROR:",
+            error
+        );
+
+        showToast(
+            "Could not delete trainer."
+        );
+
+    }
 
 }
 
@@ -1011,508 +1622,36 @@ async function updateBookingStatus(
             .update({
                 status: status
             })
-            .eq("id", id);
-
-        if (error) {
-            throw error;
-        }
-
-        showToast(
-            `Booking ${status}.`,
-            "success"
-        );
-
-        await loadBookings();
-        updateDashboard();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            error.message ||
-            "Unable to update booking.",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   DELETE BOOKING
-   ========================================================= */
-
-async function deleteBooking(id) {
-
-    if (
-        !confirm(
-            "Delete this booking?"
-        )
-    ) {
-        return;
-    }
-
-    try {
-
-        const {
-            error
-        } = await db
-            .from("bookings")
-            .delete()
-            .eq("id", id);
-
-        if (error) {
-            throw error;
-        }
-
-        showToast(
-            "Booking deleted.",
-            "success"
-        );
-
-        await loadBookings();
-        updateDashboard();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            error.message ||
-            "Unable to delete booking.",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RENDER PAYMENTS
-   ========================================================= */
-
-function renderPayments(list = payments) {
-
-    const table =
-        document.getElementById(
-            "paymentsTable"
-        );
-
-    if (!table) {
-        return;
-    }
-
-    if (!list.length) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="100%" class="empty-state">
-                    No payments found
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    table.innerHTML =
-        list.map((payment, index) => {
-
-            const name =
-                payment.member_name ||
-                payment.name ||
-                "Unknown";
-
-            const amount =
-                Number(
-                    payment.amount || 0
-                );
-
-            const method =
-                payment.payment_method ||
-                payment.method ||
-                "-";
-
-            const status =
-                payment.status ||
-                "Paid";
-
-            return `
-                <tr>
-
-                    <td>${index + 1}</td>
-
-                    <td>
-                        ${escapeHTML(name)}
-                    </td>
-
-                    <td>
-                        ${formatCurrency(amount)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(method)}
-                    </td>
-
-                    <td>
-                        <span class="status-badge ${getStatusClass(status)}">
-                            ${escapeHTML(status)}
-                        </span>
-                    </td>
-
-                    <td>
-                        ${formatDate(
-                            payment.created_at
-                        )}
-                    </td>
-
-                </tr>
-            `;
-
-        }).join("");
-
-}
-
-
-/* =========================================================
-   RENDER TRAINERS
-   ========================================================= */
-
-function renderTrainers(list = trainers) {
-
-    const table =
-        document.getElementById(
-            "trainersTable"
-        );
-
-    if (!table) {
-        return;
-    }
-
-    if (!list.length) {
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="100%" class="empty-state">
-                    No trainers found
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    table.innerHTML =
-        list.map((trainer, index) => {
-
-            const name =
-                trainer.name ||
-                "Unknown";
-
-            const specialty =
-                trainer.specialization ||
-                trainer.specialty ||
-                "-";
-
-            const phone =
-                trainer.phone ||
-                "-";
-
-            return `
-                <tr>
-
-                    <td>${index + 1}</td>
-
-                    <td>
-                        <strong>
-                            ${escapeHTML(name)}
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${escapeHTML(specialty)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(phone)}
-                    </td>
-
-                    <td>
-
-                        <button
-                            class="action-btn delete-btn"
-                            onclick="deleteTrainer('${trainer.id}')">
-                            Delete
-                        </button>
-
-                    </td>
-
-                </tr>
-            `;
-
-        }).join("");
-
-}
-
-
-/* =========================================================
-   DELETE TRAINER
-   ========================================================= */
-
-async function deleteTrainer(id) {
-
-    if (
-        !confirm(
-            "Delete this trainer?"
-        )
-    ) {
-        return;
-    }
-
-    try {
-
-        const {
-            error
-        } = await db
-            .from("trainers")
-            .delete()
-            .eq("id", id);
-
-        if (error) {
-            throw error;
-        }
-
-        showToast(
-            "Trainer deleted.",
-            "success"
-        );
-
-        await loadTrainers();
-
-        updateDashboard();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            error.message ||
-            "Unable to delete trainer.",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-function setupNavigation() {
-
-    const navItems =
-        document.querySelectorAll(
-            "[data-section]"
-        );
-
-    navItems.forEach(item => {
-
-        item.addEventListener(
-            "click",
-            () => {
-
-                const section =
-                    item.dataset.section;
-
-                switchSection(section);
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   SWITCH SECTION
-   ========================================================= */
-
-function switchSection(section) {
-
-    currentSection = section;
-
-    document
-        .querySelectorAll(
-            ".admin-section, .page-section"
-        )
-        .forEach(element => {
-
-            element.style.display = "none";
-
-        });
-
-
-    const target =
-        document.getElementById(section);
-
-    if (target) {
-
-        target.style.display =
-            section === "dashboard"
-                ? "block"
-                : "block";
-
-    }
-
-
-    document
-        .querySelectorAll(
-            "[data-section]"
-        )
-        .forEach(item => {
-
-            item.classList.toggle(
-                "active",
-                item.dataset.section === section
+            .eq(
+                "id",
+                id
             );
 
-        });
-
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-}
-
-
-/* =========================================================
-   LOGOUT BUTTON SETUP
-   ========================================================= */
-
-function setupLogout() {
-
-    const buttons =
-        document.querySelectorAll(
-            "#logoutBtn, .logout-btn"
-        );
-
-    buttons.forEach(button => {
-
-        button.addEventListener(
-            "click",
-            logout
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   FORM SETUP
-   ========================================================= */
-
-function setupForms() {
-
-    const loginForm =
-        document.getElementById(
-            "adminLoginForm"
-        );
-
-    if (loginForm) {
-
-        loginForm.addEventListener(
-            "submit",
-            adminLogin
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   ADD TRAINER
-   ========================================================= */
-
-async function addTrainer(event) {
-
-    if (event) {
-        event.preventDefault();
-    }
-
-    const name =
-        document.getElementById(
-            "trainerName"
-        )?.value.trim();
-
-    const specialty =
-        document.getElementById(
-            "trainerSpecialty"
-        )?.value.trim();
-
-    const phone =
-        document.getElementById(
-            "trainerPhone"
-        )?.value.trim();
-
-
-    if (!name) {
-
-        showToast(
-            "Enter trainer name.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const {
-            error
-        } = await db
-            .from("trainers")
-            .insert({
-                name,
-                specialization: specialty,
-                phone
-            });
 
         if (error) {
+
             throw error;
+
         }
 
+
         showToast(
-            "Trainer added successfully.",
-            "success"
+            "Booking status updated."
         );
 
-        document
-            .getElementById("trainerForm")
-            ?.reset();
 
-        await loadTrainers();
+        await loadBookings();
 
-        updateDashboard();
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "UPDATE BOOKING ERROR:",
+            error
+        );
 
         showToast(
-            error.message ||
-            "Unable to add trainer.",
-            "error"
+            "Could not update booking."
         );
 
     }
@@ -1521,201 +1660,55 @@ async function addTrainer(event) {
 
 
 /* =========================================================
-   SEARCH BOOKINGS
+   SEARCH TABLE
    ========================================================= */
 
-function searchBookings() {
+function searchTable(
+    inputId,
+    tableId
+) {
 
     const input =
         document.getElementById(
-            "bookingSearch"
+            inputId
         );
 
-    if (!input) {
+    const table =
+        document.getElementById(
+            tableId
+        );
+
+
+    if (!input || !table) {
         return;
     }
 
-    const value =
+
+    const search =
         input.value
             .toLowerCase()
             .trim();
 
-    const filtered =
-        bookings.filter(booking => {
 
-            const text =
-                `${booking.name || ""}
-                 ${booking.member_name || ""}
-                 ${booking.status || ""}
-                 ${booking.date || ""}`
-                    .toLowerCase();
-
-            return text.includes(value);
-
-        });
-
-    renderBookings(filtered);
-
-}
-
-
-/* =========================================================
-   SEARCH PAYMENTS
-   ========================================================= */
-
-function searchPayments() {
-
-    const input =
-        document.getElementById(
-            "paymentSearch"
-        );
-
-    if (!input) {
-        return;
-    }
-
-    const value =
-        input.value
-            .toLowerCase()
-            .trim();
-
-    const filtered =
-        payments.filter(payment => {
-
-            const text =
-                `${payment.name || ""}
-                 ${payment.member_name || ""}
-                 ${payment.method || ""}
-                 ${payment.payment_method || ""}`
-                    .toLowerCase();
-
-            return text.includes(value);
-
-        });
-
-    renderPayments(filtered);
-
-}
-
-
-/* =========================================================
-   CLOSE MODAL
-   ========================================================= */
-
-function closeModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (modal) {
-        modal.classList.remove("active");
-    }
-
-}
-
-
-/* =========================================================
-   REFRESH DATA
-   ========================================================= */
-
-async function refreshData() {
-
-    const button =
-        document.getElementById(
-            "refreshBtn"
-        );
-
-    if (button) {
-
-        button.disabled = true;
-
-        button.classList.add(
-            "loading"
-        );
-
-    }
-
-    await loadAllData();
-
-    if (button) {
-
-        button.disabled = false;
-
-        button.classList.remove(
-            "loading"
-        );
-
-    }
-
-    showToast(
-        "Data refreshed.",
-        "success"
-    );
-
-}
-
-
-/* =========================================================
-   EXPORT DATA
-   ========================================================= */
-
-function exportData() {
-
-    const data = {
-
-        exportedAt:
-            new Date().toISOString(),
-
-        members,
-        bookings,
-        payments,
-        trainers
-
-    };
-
-
-    const json =
-        JSON.stringify(
-            data,
-            null,
-            2
+    const rows =
+        table.querySelectorAll(
+            "tbody tr"
         );
 
 
-    const blob =
-        new Blob(
-            [json],
-            {
-                type: "application/json"
-            }
-        );
+    rows.forEach(row => {
+
+        const text =
+            row.textContent
+                .toLowerCase();
 
 
-    const url =
-        URL.createObjectURL(blob);
+        row.style.display =
+            text.includes(search)
+                ? ""
+                : "none";
 
-
-    const link =
-        document.createElement("a");
-
-    link.href = url;
-
-    link.download =
-        `ray-sports-club-backup-${Date.now()}.json`;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-    URL.revokeObjectURL(url);
-
-
-    showToast(
-        "Backup downloaded.",
-        "success"
-    );
+    });
 
 }
 
@@ -1724,10 +1717,7 @@ function exportData() {
    TOAST
    ========================================================= */
 
-function showToast(
-    message,
-    type = "success"
-) {
+function showToast(message) {
 
     let toast =
         document.getElementById(
@@ -1742,7 +1732,11 @@ function showToast(
                 "div"
             );
 
-        toast.id = "toast";
+        toast.id =
+            "toast";
+
+        toast.className =
+            "toast";
 
         document.body.appendChild(
             toast
@@ -1754,17 +1748,10 @@ function showToast(
     toast.textContent =
         message;
 
-    toast.className =
-        `toast ${type}`;
 
-
-    requestAnimationFrame(() => {
-
-        toast.classList.add(
-            "show"
-        );
-
-    });
+    toast.classList.add(
+        "show"
+    );
 
 
     setTimeout(() => {
@@ -1779,7 +1766,7 @@ function showToast(
 
 
 /* =========================================================
-   HELPERS
+   HELPER — SET TEXT
    ========================================================= */
 
 function setText(
@@ -1788,119 +1775,91 @@ function setText(
 ) {
 
     const element =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     if (element) {
+
         element.textContent =
             value;
+
     }
 
 }
 
 
-function formatCurrency(
-    amount
-) {
+/* =========================================================
+   HELPER — FORMAT DATE
+   ========================================================= */
 
-    return new Intl.NumberFormat(
-        "en-IN",
-        {
-            style: "currency",
-            currency: "INR",
-            maximumFractionDigits: 0
-        }
-    ).format(
-        Number(amount) || 0
-    );
-
-}
-
-
-function formatDate(
-    date
-) {
+function formatDate(date) {
 
     if (!date) {
         return "-";
     }
 
-    const parsed =
-        new Date(date);
 
-    if (
-        Number.isNaN(
-            parsed.getTime()
-        )
-    ) {
+    try {
+
+        return new Date(date)
+            .toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+    } catch {
+
         return date;
+
     }
 
-    return parsed.toLocaleDateString(
+}
+
+
+/* =========================================================
+   HELPER — FORMAT MONEY
+   ========================================================= */
+
+function formatMoney(amount) {
+
+    const number =
+        Number(amount) || 0;
+
+
+    return number.toLocaleString(
         "en-IN",
         {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
         }
     );
 
 }
 
 
-function getStatusClass(
-    status
-) {
+/* =========================================================
+   HELPER — ESCAPE HTML
+   ========================================================= */
 
-    const value =
-        String(status)
-            .toLowerCase();
+function escapeHTML(value) {
 
     if (
-        value === "active" ||
-        value === "approved" ||
-        value === "confirmed" ||
-        value === "paid" ||
-        value === "success"
+        value === null ||
+        value === undefined
     ) {
 
-        return "status-success";
+        return "";
 
     }
 
 
-    if (
-        value === "pending" ||
-        value === "processing"
-    ) {
-
-        return "status-pending";
-
-    }
-
-
-    if (
-        value === "inactive" ||
-        value === "expired" ||
-        value === "cancelled" ||
-        value === "rejected" ||
-        value === "failed"
-    ) {
-
-        return "status-danger";
-
-    }
-
-
-    return "status-default";
-
-}
-
-
-function escapeHTML(
-    value
-) {
-
-    return String(value ?? "")
+    return String(value)
         .replace(
             /&/g,
             "&amp;"
@@ -1925,66 +1884,54 @@ function escapeHTML(
 }
 
 
-function setButtonLoading(
-    id,
-    loading,
-    text
-) {
-
-    const button =
-        document.getElementById(id);
-
-    if (!button) {
-        return;
-    }
-
-    button.disabled =
-        loading;
-
-    if (loading) {
-
-        button.dataset.originalText =
-            button.textContent;
-
-        button.textContent =
-            text;
-
-    } else {
-
-        button.textContent =
-            button.dataset.originalText ||
-            text;
-
-    }
-
-}
-
-
 /* =========================================================
-   REAL-TIME AUTH LISTENER
+   AUTH STATE LISTENER
    ========================================================= */
 
 db.auth.onAuthStateChange(
     async (event, session) => {
 
+        console.log(
+            "Auth event:",
+            event
+        );
+
+
         if (
-            event === "SIGNED_IN" &&
-            session
+            event ===
+            "SIGNED_IN"
         ) {
 
             currentAdmin =
-                session.user;
+                session?.user || null;
+
 
             showAdminPanel();
+
+
+            /*
+             * Small timeout prevents
+             * Supabase auth event from
+             * blocking the UI.
+             */
+
+            setTimeout(
+                () => {
+                    loadAllData();
+                },
+                0
+            );
 
         }
 
 
         if (
-            event === "SIGNED_OUT"
+            event ===
+            "SIGNED_OUT"
         ) {
 
-            currentAdmin = null;
+            currentAdmin =
+                null;
 
             showLoginScreen();
 
@@ -1995,7 +1942,7 @@ db.auth.onAuthStateChange(
 
 
 /* =========================================================
-   MAKE FUNCTIONS AVAILABLE TO HTML
+   EXPOSE FUNCTIONS TO HTML
    ========================================================= */
 
 window.adminLogin =
@@ -2004,46 +1951,40 @@ window.adminLogin =
 window.logout =
     logout;
 
+window.switchSection =
+    switchSection;
+
 window.deleteMember =
     deleteMember;
-
-window.viewMember =
-    viewMember;
 
 window.deleteBooking =
     deleteBooking;
 
-window.updateBookingStatus =
-    updateBookingStatus;
+window.deletePayment =
+    deletePayment;
 
 window.deleteTrainer =
     deleteTrainer;
 
-window.addTrainer =
-    addTrainer;
+window.updateBookingStatus =
+    updateBookingStatus;
 
-window.searchMembers =
-    searchMembers;
+window.searchTable =
+    searchTable;
 
-window.searchBookings =
-    searchBookings;
-
-window.searchPayments =
-    searchPayments;
-
-window.closeModal =
-    closeModal;
-
-window.refreshData =
-    refreshData;
-
-window.exportData =
-    exportData;
-
-window.switchSection =
-    switchSection;
+window.showToast =
+    showToast;
 
 
 /* =========================================================
-   END OF ADMIN.JS
+   FINAL DEBUG
    ========================================================= */
+
+console.log(
+    "admin.js loaded successfully."
+);
+
+console.log(
+    "Supabase URL:",
+    SUPABASE_URL
+);
