@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Admin Panel - Saraswati Mandir Badminton Training Centre, Nagpur">
+
+    <title>
+        Admin Panel | Saraswati Mandir Badminton Training Centre
+    </title>
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     MAIN CONTAINER
+===================================================== -->
+
+<div class="container">
+
+
+    <!-- =================================================
+         LOGIN SECTION
+    ================================================== -->
+
+    <div
+        id="loginBox"
+        class="loginBox">
+
+
+        <!-- Logo / Icon -->
+
+        <div class="brandIcon">
+            🏸
+        </div>
+
+
+        <p class="brandSmall">
+            MOTIVATE SPORTS AND CULTURAL
+        </p>
+
+
+        <h1>
+            सरस्वती मंदिर
+        </h1>
+
+
+        <h2>
+            बॅडमिंटन प्रशिक्षण केंद्र
+        </h2>
+
+
+        <div class="loginDivider"></div>
+
+
+        <p class="adminTitle">
+            🔐 Admin Login
+        </p>
+
+
+        <!-- EMAIL -->
+
+        <label for="email">
+            Email Address
+        </label>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter admin email"
+            autocomplete="email">
+
+
+        <!-- PASSWORD -->
+
+        <label for="password">
+            Password
+        </label>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            autocomplete="current-password">
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+            id="loginBtn"
+            type="button">
+
+            🔐 Login
+
+        </button>
+
+
+        <!-- LOGIN MESSAGE -->
+
+        <p
+            id="loginMessage"
+            class="message">
+        </p>
+
+
+        <div class="loginFooter">
+
+            <p>
+                Motivate Sports And Cultural Bahuuddeshiy Sanstha
+            </p>
+
+            <p>
+                Nagpur
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         ADMIN DASHBOARD
+    ================================================== -->
+
+    <div
+        id="dashboard"
+        class="dashboard"
+        style="display:none;">
+
+
+        <!-- =================================================
+             DASHBOARD HEADER
+        ================================================== -->
+
+        <header class="dashboardHeader">
+
+
+            <div class="dashboardBrand">
+
+                <p class="dashboardSmall">
+                    ADMINISTRATION PANEL
+                </p>
+
+                <h1>
+                    🏸 Saraswati Mandir
+                </h1>
+
+                <h2>
+                    Badminton Training Centre
+                </h2>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="logoutBtn"
+                type="button">
+
+                🚪 Logout
+
+            </button>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             ORGANIZATION INFORMATION
+        ================================================== -->
+
+        <section class="infoBox">
+
+            <div class="sectionIcon">
+                🏢
+            </div>
+
+            <div>
+
+                <p class="dashboardSmall">
+                    REGISTERED ORGANIZATION
+                </p>
+
+                <h2>
+                    Motivate Sports And Cultural
+                    Bahuuddeshiy Sanstha
+                </h2>
+
+                <p>
+                    📍 Nagpur, Maharashtra
+                </p>
+
+                <p>
+                    📜 Registration No:
+                    <strong>
+                        Nagpur/0000293/2023
+                    </strong>
+                </p>
+
+                <p>
+                    ✉️
+                    <a href="mailto:KanodaNitin@gmail.com">
+                        KanodaNitin@gmail.com
+                    </a>
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             UPLOAD SECTION
+        ================================================== -->
+
+        <section class="uploadBox">
+
+
+            <div class="uploadIcon">
+                📸
+            </div>
+
+
+            <div class="uploadContent">
+
+                <p class="dashboardSmall">
+                    WEBSITE CONTENT
+                </p>
+
+                <h2>
+                    Upload Photo or Video
+                </h2>
+
+                <p>
+                    Add badminton training photos and videos
+                    to the website gallery.
+                </p>
+
+
+                <!-- FILE INPUT -->
+
+                <label
+                    class="fileLabel"
+                    for="mediaFile">
+
+                    📁 Select Photo / Video
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="mediaFile"
+                    accept="image/*,video/*">
+
+
+                <!-- SELECTED FILE -->
+
+                <div
+                    id="selectedFile"
+                    class="selectedFile">
+
+                    No file selected
+
+                </div>
+
+
+                <!-- UPLOAD BUTTON -->
+
+                <button
+                    id="uploadBtn"
+                    class="uploadBtn"
+                    type="button">
+
+                    ⬆️ Upload to Gallery
+
+                </button>
+
+
+                <!-- UPLOAD MESSAGE -->
+
+                <p
+                    id="uploadMessage"
+                    class="message">
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             GALLERY SECTION
+        ================================================== -->
+
+        <section class="gallerySection">
+
+
+            <div class="galleryHeader">
+
+
+                <div>
+
+                    <p class="dashboardSmall">
+                        MEDIA MANAGEMENT
+                    </p>
+
+                    <h2>
+                        🖼️ Uploaded Gallery
+                    </h2>
+
+                    <p>
+                        Manage photos and videos displayed
+                        on the main website.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="refreshGalleryBtn"
+                    class="refreshBtn"
+                    type="button">
+
+                    🔄 Refresh
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- ADMIN GALLERY -->
+
+            <div
+                id="adminGallery"
+                class="adminGallery">
+
+                <div class="galleryLoading">
+
+                    Loading gallery...
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             TRAINER INFORMATION
+        ================================================== -->
+
+        <section class="trainerAdminBox">
+
+
+            <div class="sectionHeading">
+
+                <p class="dashboardSmall">
+                    TRAINING CENTRE
+                </p>
+
+                <h2>
+                    🏸 Trainer Information
+                </h2>
+
+            </div>
+
+
+            <div class="trainerAdminGrid">
+
+
+                <div class="trainerAdminCard">
+
+                    <span class="trainerIcon">
+                        🏸
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            बॅडमिंटन प्रशिक्षक
+                        </strong>
+
+                        <p>
+                            अश्विनी नितीन कानोडे
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="trainerAdminCard">
+
+                    <span class="trainerIcon">
+                        📞
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Contact
+                        </strong>
+
+                        <p>
+                            <a href="tel:+919370169313">
+                                9370169313
+                            </a>
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="trainerAdminCard">
+
+                    <span class="trainerIcon">
+                        ✉️
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Email
+                        </strong>
+
+                        <p>
+                            <a href="mailto:KanodaNitin@gmail.com">
+                                KanodaNitin@gmail.com
+                            </a>
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="trainerAdminCard">
+
+                    <span class="trainerIcon">
+                        ⏰
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Training Time
+                        </strong>
+
+                        <p>
+                            5:00 PM – 6:00 PM
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ADDRESS
+        ================================================== -->
+
+        <section class="addressAdminBox">
+
+            <div class="sectionHeading">
+
+                <p class="dashboardSmall">
+                    TRAINING CENTRE LOCATION
+                </p>
+
+                <h2>
+                    📍 Address
+                </h2>
+
+            </div>
+
+
+            <p>
+                सरस्वती मंदिर,
+                तुळशीबाग रोड,
+                रेशीम बाग,
+                नागपूरचा राजा गणेश मंडळ अपोजिट,
+                नागपूर – 440024
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="adminFooter">
+
+            <h3>
+                🏸 सरस्वती मंदिर बॅडमिंटन प्रशिक्षण केंद्र
+            </h3>
+
+            <p>
+                Motivate Sports And Cultural Bahuuddeshiy Sanstha
+            </p>
+
+            <p>
+                Nagpur, Maharashtra
+            </p>
+
+            <div class="footerLine"></div>
+
+            <p class="copyright">
+                © 2026 Ray Sports Club / Saraswati Mandir
+            </p>
+
+        </footer>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SUPABASE JAVASCRIPT LIBRARY
+===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
+
+
+<!-- =====================================================
+     ADMIN JAVASCRIPT
+===================================================== -->
+
+<script
+    type="module"
+    src="admin.js">
+</script>
+
+
+</body>
+
+</html>
