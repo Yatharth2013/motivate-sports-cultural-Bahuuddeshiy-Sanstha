@@ -94,11 +94,11 @@ async function checkAdminSession() {
 
 function showLoginScreen() {
 
-    const login = document.getElementById("loginSection");
-    const panel = document.getElementById("adminPanel");
+    const login = document.getElementById("loginBox");
+    const panel = document.getElementById("dashboard");
 
     if (login) {
-        login.style.display = "flex";
+        login.style.display = "block";
     }
 
     if (panel) {
@@ -107,15 +107,14 @@ function showLoginScreen() {
 
 }
 
-
 /* =========================================================
    SHOW ADMIN PANEL
    ========================================================= */
 
 function showAdminPanel() {
 
-    const login = document.getElementById("loginSection");
-    const panel = document.getElementById("adminPanel");
+    const login = document.getElementById("loginBox");
+    const panel = document.getElementById("dashboard");
 
     if (login) {
         login.style.display = "none";
@@ -140,54 +139,54 @@ async function adminLogin(event) {
         event.preventDefault();
     }
 
-    const emailInput =
-        document.getElementById("adminEmail");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const message = document.getElementById("loginMessage");
 
-    const passwordInput =
-        document.getElementById("adminPassword");
-
-    const email =
-        emailInput?.value.trim();
-
-    const password =
-        passwordInput?.value;
+    const email = emailInput?.value.trim();
+    const password = passwordInput?.value;
 
     if (!email || !password) {
 
-        showToast(
-            "Please enter email and password.",
-            "error"
-        );
+        if (message) {
+            message.textContent = "Please enter email and password.";
+            message.className = "message error";
+        }
 
         return;
     }
 
     try {
 
-        setButtonLoading(
-            "loginBtn",
-            true,
-            "Logging in..."
-        );
+        const button = document.getElementById("loginBtn");
+
+        if (button) {
+            button.disabled = true;
+            button.textContent = "⏳ Logging in...";
+        }
+
+        console.log("Attempting Supabase login:", email);
 
         const {
             data,
             error
         } = await db.auth.signInWithPassword({
-            email,
-            password
+            email: email,
+            password: password
         });
 
         if (error) {
             throw error;
         }
 
+        console.log("Login successful:", data.user);
+
         currentAdmin = data.user;
 
-        showToast(
-            "Login successful!",
-            "success"
-        );
+        if (message) {
+            message.textContent = "Login successful!";
+            message.className = "message success";
+        }
 
         showAdminPanel();
 
@@ -195,25 +194,26 @@ async function adminLogin(event) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("LOGIN ERROR:", error);
 
-        showToast(
-            error.message || "Login failed.",
-            "error"
-        );
+        if (message) {
+            message.textContent =
+                error.message || "Login failed.";
+            message.className = "message error";
+        }
 
     } finally {
 
-        setButtonLoading(
-            "loginBtn",
-            false,
-            "Login"
-        );
+        const button = document.getElementById("loginBtn");
+
+        if (button) {
+            button.disabled = false;
+            button.textContent = "🔐 Login";
+        }
 
     }
 
 }
-
 
 /* =========================================================
    LOGOUT
