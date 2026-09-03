@@ -13,10 +13,9 @@ const SUPABASE_ANON_KEY = "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
 const { createClient } = supabase;
 
 const db = createClient(
-    https://xkdqxtxfkgbrmbotazel.supabase.co,
-    sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
 );
-
 
 /* =========================================================
    GLOBAL VARIABLES
