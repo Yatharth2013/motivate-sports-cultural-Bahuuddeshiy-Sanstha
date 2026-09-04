@@ -1,153 +1,135 @@
+```css
 /* =========================================================
-   MOTIVATE SPORTS & CULTURAL BAHUUDDESHIY SANSTHA
-   SARASWATI MANDIR BADMINTON TRAINING CENTRE
-   NAGPUR
-   MODERN SPORTS ACADEMY UI
+   MOTIVATE SPORTS & CULTURAL MULTIPURPOSE ORGANIZATION
+   PREMIUM SPORTS WEBSITE UI
+   Inspired by the previous Ray Sports Club style
    ========================================================= */
 
 
 /* =========================================================
-   01. DESIGN SYSTEM
+   ROOT
    ========================================================= */
 
 :root{
 
-    --primary:#0757c9;
-    --primary-dark:#043b8c;
-    --primary-light:#eaf3ff;
-
-    --green:#0c9b62;
-    --green-dark:#067047;
-    --green-light:#e9fff5;
-
-    --yellow:#ffd21c;
-    --yellow-light:#fff7c7;
-
-    --navy:#071b38;
-    --navy-2:#0c2c55;
+    --primary:#ff5a1f;
+    --primary-dark:#e6440d;
+    --secondary:#111827;
+    --dark:#07111f;
+    --dark-2:#0d1828;
 
     --white:#ffffff;
+    --light:#f5f7fb;
+    --light-2:#eef2f7;
 
-    --bg:#f5f8fc;
-    --bg-soft:#eef5fb;
+    --text:#172033;
+    --muted:#6b7280;
 
-    --text:#10233d;
-    --text-light:#5d6d82;
-    --muted:#718096;
+    --border:#e5e7eb;
 
-    --border:#dfe8f2;
+    --success:#16a34a;
 
     --shadow-sm:
-        0 5px 20px rgba(7,39,79,.07);
+        0 5px 20px rgba(0,0,0,.07);
 
-    --shadow-md:
-        0 12px 35px rgba(7,39,79,.11);
+    --shadow:
+        0 15px 45px rgba(0,0,0,.12);
 
     --shadow-lg:
-        0 25px 65px rgba(7,39,79,.16);
+        0 25px 70px rgba(0,0,0,.18);
 
-    --radius-sm:12px;
-    --radius-md:20px;
-    --radius-lg:30px;
+    --radius:18px;
+    --radius-lg:28px;
 
-    --max-width:1200px;
+    --container:1200px;
+
 }
 
 
 /* =========================================================
-   02. RESET
+   RESET
    ========================================================= */
 
 *{
+
     margin:0;
     padding:0;
+
     box-sizing:border-box;
+
 }
 
+
 html{
+
     scroll-behavior:smooth;
-    scroll-padding-top:90px;
+
 }
+
 
 body{
 
     font-family:
-        'Noto Sans Devanagari',
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
+        "Poppins",
+        "Baloo 2",
         sans-serif;
 
-    background:var(--bg);
+    background:var(--light);
 
     color:var(--text);
 
-    line-height:1.6;
+    line-height:1.7;
 
     overflow-x:hidden;
 
-    -webkit-font-smoothing:antialiased;
-
-    text-rendering:optimizeLegibility;
 }
+
 
 img,
 video{
+
     max-width:100%;
+
 }
 
+
 a{
+
+    text-decoration:none;
+
     color:inherit;
+
 }
+
 
 button,
-a{
-    -webkit-tap-highlight-color:transparent;
+input,
+textarea,
+select{
+
+    font-family:inherit;
+
 }
 
 
 /* =========================================================
-   03. SELECTION
+   CONTAINER
    ========================================================= */
 
-::selection{
-    background:var(--primary);
-    color:white;
+.container{
+
+    width:min(
+        var(--container),
+        calc(100% - 40px)
+    );
+
+    margin:auto;
+
 }
 
 
 /* =========================================================
-   04. SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar{
-    width:9px;
-}
-
-::-webkit-scrollbar-track{
-    background:#edf2f7;
-}
-
-::-webkit-scrollbar-thumb{
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--primary),
-            var(--green)
-        );
-
-    border-radius:50px;
-}
-
-::-webkit-scrollbar-thumb:hover{
-    background:var(--primary-dark);
-}
-
-
-/* =========================================================
-   05. NAVBAR
+   NAVBAR
    ========================================================= */
 
 .navbar{
@@ -159,11 +141,42 @@ a{
 
     width:100%;
 
-    min-height:78px;
+    z-index:1000;
 
-    padding:
-        12px
-        clamp(18px,5vw,70px);
+    padding:15px 0;
+
+    background:
+        rgba(7,17,31,.92);
+
+    backdrop-filter:
+        blur(15px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+
+    transition:.3s ease;
+
+}
+
+
+.navbar.scrolled{
+
+    padding:10px 0;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.2);
+
+}
+
+
+.nav-container{
+
+    width:min(
+        1300px,
+        calc(100% - 40px)
+    );
+
+    margin:auto;
 
     display:flex;
 
@@ -173,207 +186,299 @@ a{
 
     gap:25px;
 
-    background:
-        rgba(255,255,255,.94);
-
-    border-bottom:
-        1px solid rgba(7,87,201,.08);
-
-    box-shadow:
-        0 8px 30px rgba(7,35,70,.09);
-
-    backdrop-filter:blur(18px);
-
-    -webkit-backdrop-filter:blur(18px);
-
-    z-index:9999;
 }
 
 
 /* =========================================================
-   06. LOGO
+   LOGO
    ========================================================= */
 
 .logo{
 
-    flex:0 0 auto;
-
     display:flex;
 
-    flex-direction:column;
+    align-items:center;
 
-    justify-content:center;
+    gap:12px;
 
-    min-width:max-content;
-}
+    color:white;
 
-.logo h2{
+    min-width:230px;
 
-    color:var(--primary);
-
-    font-size:
-        clamp(19px,2vw,27px);
-
-    line-height:1.15;
-
-    font-weight:900;
-
-    letter-spacing:-.02em;
-
-    white-space:nowrap;
-}
-
-.logo p{
-
-    margin-top:2px;
-
-    color:var(--green-dark);
-
-    font-size:12px;
-
-    font-weight:800;
-
-    letter-spacing:.08em;
 }
 
 
-/* =========================================================
-   07. NAVIGATION
-   ========================================================= */
+.logo-icon{
 
-nav{
+    width:48px;
+    height:48px;
 
     display:flex;
 
     align-items:center;
 
-    justify-content:flex-end;
-
-    gap:4px;
-
-    flex-wrap:wrap;
-}
-
-nav a{
-
-    position:relative;
-
-    display:inline-flex;
-
-    align-items:center;
-
     justify-content:center;
 
-    min-height:40px;
-
-    padding:
-        8px
-        12px;
-
-    color:#263b55;
-
-    text-decoration:none;
-
-    font-size:15px;
-
-    font-weight:700;
-
-    border-radius:10px;
-
-    transition:
-        color .25s ease,
-        background .25s ease,
-        transform .25s ease;
-}
-
-nav a:not(.adminBtn)::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:12px;
-    right:12px;
-
-    bottom:3px;
-
-    height:2px;
-
-    border-radius:50px;
-
-    background:var(--primary);
-
-    transform:scaleX(0);
-
-    transition:
-        transform .25s ease;
-}
-
-nav a:not(.adminBtn):hover{
-
-    color:var(--primary);
-
-    background:var(--primary-light);
-}
-
-nav a:not(.adminBtn):hover::after{
-    transform:scaleX(1);
-}
-
-
-/* =========================================================
-   08. ADMIN BUTTON
-   ========================================================= */
-
-.adminBtn{
-
-    margin-left:7px;
-
-    padding:
-        10px 19px !important;
-
-    min-height:42px;
-
-    color:white !important;
+    border-radius:14px;
 
     background:
         linear-gradient(
             135deg,
             var(--primary),
-            var(--primary-dark)
+            #ff8a00
         );
 
-    border-radius:50px !important;
-
-    font-size:14px !important;
-
-    font-weight:900 !important;
+    font-size:25px;
 
     box-shadow:
-        0 7px 20px rgba(7,87,201,.22);
+        0 8px 25px rgba(255,90,31,.3);
 
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease;
 }
 
-.adminBtn::after{
-    display:none !important;
+
+.logo-text{
+
+    display:flex;
+
+    flex-direction:column;
+
+    line-height:1.1;
+
 }
 
-.adminBtn:hover{
 
-    color:white !important;
+.logo-text strong{
 
-    transform:translateY(-2px);
+    font-size:20px;
 
-    box-shadow:
-        0 12px 28px rgba(7,87,201,.32);
+    font-weight:800;
+
+    color:white;
+
+}
+
+
+.logo-text span{
+
+    margin-top:4px;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1.3px;
+
+    color:#aeb8c8;
+
 }
 
 
 /* =========================================================
-   09. HERO
+   NAV MENU
+   ========================================================= */
+
+.nav-menu{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+}
+
+
+.nav-menu a{
+
+    position:relative;
+
+    padding:10px 14px;
+
+    color:#dbe2ec;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    border-radius:10px;
+
+    transition:.25s ease;
+
+}
+
+
+.nav-menu a:hover,
+.nav-menu a.active{
+
+    color:white;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.nav-menu a.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    bottom:3px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:20px;
+
+    height:3px;
+
+    border-radius:20px;
+
+    background:var(--primary);
+
+}
+
+
+/* =========================================================
+   NAV BUTTON
+   ========================================================= */
+
+.nav-button{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:12px 19px;
+
+    border-radius:12px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 8px 25px rgba(255,90,31,.25);
+
+    transition:.25s ease;
+
+}
+
+
+.nav-button:hover{
+
+    transform:
+        translateY(-2px);
+
+    background:
+        var(--primary-dark);
+
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+   ========================================================= */
+
+.mobile-menu-btn{
+
+    display:none;
+
+    width:44px;
+    height:44px;
+
+    border:1px solid
+        rgba(255,255,255,.15);
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:white;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+.mobile-menu{
+
+    position:fixed;
+
+    top:76px;
+    left:15px;
+    right:15px;
+
+    z-index:999;
+
+    padding:12px;
+
+    display:none;
+
+    flex-direction:column;
+
+    background:
+        rgba(7,17,31,.98);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    border-radius:18px;
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.35);
+
+}
+
+
+.mobile-menu.show{
+
+    display:flex;
+
+}
+
+
+.mobile-menu a{
+
+    padding:14px 16px;
+
+    color:white;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+}
+
+
+.mobile-menu a:hover{
+
+    background:
+        rgba(255,90,31,.15);
+
+    color:#ff7846;
+
+}
+
+
+/* =========================================================
+   HERO
    ========================================================= */
 
 .hero{
@@ -386,479 +491,771 @@ nav a:not(.adminBtn):hover::after{
 
     align-items:center;
 
-    justify-content:center;
-
     padding:
-        150px
-        clamp(18px,6vw,80px)
-        110px;
-
-    text-align:center;
-
-    isolation:isolate;
-
-    background:
-
-        linear-gradient(
-            180deg,
-            rgba(3,20,47,.65),
-            rgba(3,25,55,.58)
-        ),
-
-        url("poster.jpg");
-
-    background-size:cover;
-
-    background-position:center;
-
-    background-repeat:no-repeat;
-
-    overflow:hidden;
-}
-
-
-/* Blue glow */
-
-.hero::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
+        130px 0
+        80px;
 
     background:
 
         radial-gradient(
-            circle at 20% 30%,
-            rgba(0,153,255,.24),
+            circle at 80% 25%,
+            rgba(255,90,31,.18),
             transparent 35%
         ),
 
-        radial-gradient(
-            circle at 80% 60%,
-            rgba(12,155,98,.18),
-            transparent 38%
-        );
-
-    pointer-events:none;
-
-    z-index:-1;
-}
-
-
-/* Bottom fade */
-
-.hero::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:0;
-    right:0;
-    bottom:0;
-
-    height:130px;
-
-    background:
         linear-gradient(
-            to bottom,
-            transparent,
-            var(--bg)
+            135deg,
+            #06101d,
+            #0d1929 55%,
+            #111827
         );
 
-    opacity:.9;
+    color:white;
 
-    pointer-events:none;
+    overflow:hidden;
 
-    z-index:-1;
 }
 
 
-/* Existing overlay */
-
-.overlay{
+.hero-background{
 
     position:absolute;
 
     inset:0;
 
-    background:
+    opacity:.25;
+
+    background-image:
+
         linear-gradient(
-            180deg,
-            rgba(3,18,40,.12),
-            rgba(3,18,40,.35)
+            rgba(255,255,255,.035) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.035) 1px,
+            transparent 1px
         );
 
-    z-index:-1;
+    background-size:
+        45px 45px;
 
-    pointer-events:none;
 }
 
 
-/* =========================================================
-   10. HERO CONTENT
-   ========================================================= */
-
-.heroContent{
+.hero-container{
 
     position:relative;
 
     z-index:2;
 
-    width:100%;
-
-    max-width:1000px;
-
-    margin:auto;
-
-    padding:20px;
-
-    animation:
-        heroReveal
-        .9s
-        cubic-bezier(.2,.7,.2,1)
-        both;
-}
-
-.hero h3{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    margin-bottom:17px;
-
-    padding:
-        8px 18px;
-
-    color:#071b38;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--yellow),
-            #fff078
-        );
-
-    border-radius:50px;
-
-    font-size:
-        clamp(18px,2.7vw,28px);
-
-    font-weight:900;
-
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.18);
-}
-
-.hero h1{
-
-    margin-bottom:15px;
-
-    color:white;
-
-    font-size:
-        clamp(38px,6vw,72px);
-
-    line-height:1.12;
-
-    font-weight:900;
-
-    letter-spacing:-.035em;
-
-    text-shadow:
-        0 5px 25px rgba(0,0,0,.35);
-}
-
-.hero h2{
-
-    max-width:850px;
-
-    margin:
-        0 auto
-        22px;
-
-    color:#e9f7ff;
-
-    font-size:
-        clamp(21px,3vw,34px);
-
-    line-height:1.5;
-
-    font-weight:800;
-
-    text-shadow:
-        0 4px 18px rgba(0,0,0,.35);
-}
-
-.hero p{
-
-    margin:
-        0 auto
-        32px;
-
-    color:rgba(255,255,255,.95);
-
-    font-size:
-        clamp(16px,2vw,21px);
-
-    line-height:1.8;
-
-    font-weight:600;
-}
-
-
-/* =========================================================
-   11. HERO BUTTONS
-   ========================================================= */
-
-.heroButtons{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:13px;
-
-    flex-wrap:wrap;
-}
-
-.primaryBtn,
-.secondaryBtn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    min-width:175px;
-
-    min-height:54px;
-
-    padding:
-        13px 27px;
-
-    border-radius:50px;
-
-    text-decoration:none;
-
-    font-size:16px;
-
-    font-weight:900;
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        background .25s ease;
-}
-
-.primaryBtn{
-
-    color:#06244a;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--yellow),
-            #fff06a
-        );
-
-    box-shadow:
-        0 10px 28px rgba(0,0,0,.2);
-}
-
-.primaryBtn:hover{
-
-    transform:translateY(-4px);
-
-    box-shadow:
-        0 17px 35px rgba(0,0,0,.27);
-}
-
-.secondaryBtn{
-
-    color:white;
-
-    background:
-        rgba(255,255,255,.08);
-
-    border:
-        1.5px solid rgba(255,255,255,.8);
-
-    backdrop-filter:blur(8px);
-}
-
-.secondaryBtn:hover{
-
-    color:var(--navy);
-
-    background:white;
-
-    transform:translateY(-4px);
-
-    box-shadow:
-        0 12px 30px rgba(0,0,0,.18);
-}
-
-
-/* =========================================================
-   12. GLOBAL SECTION
-   ========================================================= */
-
-section{
-
-    position:relative;
-
-    padding:
-        clamp(70px,8vw,105px)
-        clamp(18px,6vw,80px);
-}
-
-section > h2{
-
-    position:relative;
-
-    width:max-content;
-
-    max-width:100%;
-
-    margin:
-        0 auto
-        45px;
-
-    color:var(--navy);
-
-    font-size:
-        clamp(29px,4vw,43px);
-
-    line-height:1.3;
-
-    font-weight:900;
-
-    text-align:center;
-
-    letter-spacing:-.025em;
-}
-
-section > h2::after{
-
-    content:"";
-
-    display:block;
-
-    width:65px;
-
-    height:4px;
-
-    margin:
-        14px auto
-        0;
-
-    border-radius:50px;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--primary),
-            var(--green)
-        );
-}
-
-
-/* =========================================================
-   13. ABOUT
-   ========================================================= */
-
-.about{
-
-    background:
-
-        radial-gradient(
-            circle at top right,
-            rgba(7,87,201,.05),
-            transparent 35%
-        ),
-
-        linear-gradient(
-            180deg,
-            #ffffff,
-            #f7fbff
-        );
-
-    text-align:center;
-
-    border-bottom:
-        1px solid var(--border);
-}
-
-.about p{
-
-    width:min(900px,100%);
-
-    margin:auto;
-
-    color:#506177;
-
-    font-size:
-        clamp(17px,2vw,20px);
-
-    line-height:2;
-
-    font-weight:500;
-}
-
-.about strong{
-    color:var(--primary-dark);
-    font-weight:900;
-}
-
-
-/* =========================================================
-   14. SPORTS / TRAINING
-   ========================================================= */
-
-#sports{
-
-    background:
-
-        linear-gradient(
-            180deg,
-            #eef7ff,
-            #f7fbff
-        );
-}
-
-.sportsGrid{
-
-    width:min(var(--max-width),100%);
+    width:min(
+        1200px,
+        calc(100% - 40px)
+    );
 
     margin:auto;
 
     display:grid;
 
     grid-template-columns:
-        repeat(4,minmax(0,1fr));
+        1.15fr .85fr;
 
-    gap:20px;
+    align-items:center;
+
+    gap:70px;
+
 }
 
 
 /* =========================================================
-   15. SPORT CARD
+   HERO CONTENT
    ========================================================= */
 
-.sportCard{
+.hero-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:8px 14px;
+
+    margin-bottom:22px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.06);
+
+    border-radius:50px;
+
+    color:#ff9a72;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+
+.hero h1{
+
+    font-family:
+        "Baloo 2",
+        "Poppins",
+        sans-serif;
+
+    font-size:
+        clamp(
+            42px,
+            6vw,
+            76px
+        );
+
+    line-height:1.05;
+
+    font-weight:800;
+
+    letter-spacing:-2px;
+
+    margin-bottom:25px;
+
+}
+
+
+.hero h1 span{
+
+    color:var(--primary);
+
+}
+
+
+.hero-description{
+
+    max-width:690px;
+
+    color:#b8c2d1;
+
+    font-size:16px;
+
+    line-height:1.9;
+
+    margin-bottom:32px;
+
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.hero-buttons{
+
+    display:flex;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:9px;
+
+    min-height:50px;
+
+    padding:0 22px;
+
+    border-radius:13px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:.25s ease;
+
+}
+
+
+.btn-primary{
+
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            #ff7b35
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(255,90,31,.25);
+
+}
+
+
+.btn-primary:hover{
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 18px 40px
+        rgba(255,90,31,.35);
+
+}
+
+
+.btn-outline{
+
+    color:white;
+
+    border:
+        1px solid rgba(255,255,255,.2);
+
+    background:
+        rgba(255,255,255,.05);
+
+}
+
+
+.btn-outline:hover{
+
+    background:white;
+
+    color:var(--dark);
+
+}
+
+
+/* =========================================================
+   HERO STATS
+   ========================================================= */
+
+.hero-stats{
+
+    display:flex;
+
+    gap:45px;
+
+    margin-top:45px;
+
+}
+
+
+.hero-stat{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.hero-stat strong{
+
+    color:white;
+
+    font-size:27px;
+
+    font-weight:800;
+
+}
+
+
+.hero-stat span{
+
+    color:#8f9bad;
+
+    font-size:12px;
+
+}
+
+
+/* =========================================================
+   HERO VISUAL
+   ========================================================= */
+
+.hero-visual{
 
     position:relative;
 
-    min-height:210px;
+    min-height:460px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.hero-trophy{
+
+    position:relative;
+
+    width:300px;
+    height:300px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.trophy-glow{
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,90,31,.35),
+            transparent 65%
+        );
+
+    filter:blur(15px);
+
+}
+
+
+.trophy-circle{
+
+    position:relative;
+
+    width:210px;
+    height:210px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #172235,
+            #0b1321
+        );
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,.4);
+
+}
+
+
+.trophy-circle i{
+
+    font-size:100px;
+
+    color:#ff7a35;
+
+    filter:
+        drop-shadow(
+            0 15px 20px
+            rgba(255,90,31,.35)
+        );
+
+}
+
+
+/* =========================================================
+   FLOATING CARDS
+   ========================================================= */
+
+.floating-card{
+
+    position:absolute;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 18px;
+
+    border-radius:16px;
+
+    background:
+        rgba(20,31,48,.9);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    backdrop-filter:
+        blur(12px);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.3);
+
+}
+
+
+.floating-card i{
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:
+        rgba(255,90,31,.13);
+
+    color:#ff7845;
+
+}
+
+
+.floating-card div{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.floating-card strong{
+
+    font-size:12px;
+
+    color:white;
+
+}
+
+
+.floating-card span{
+
+    color:#8995a7;
+
+    font-size:10px;
+
+}
+
+
+.card-one{
+
+    top:45px;
+
+    right:5px;
+
+}
+
+
+.card-two{
+
+    bottom:45px;
+
+    left:5px;
+
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.section{
+
+    padding:100px 0;
+
+}
+
+
+.section-heading{
+
+    max-width:720px;
+
+    margin-bottom:55px;
+
+}
+
+
+.section-heading.center{
+
+    margin-left:auto;
+    margin-right:auto;
+
+    text-align:center;
+
+}
+
+
+.section-tag{
+
+    display:inline-block;
+
+    margin-bottom:12px;
+
+    color:var(--primary);
+
+    font-size:12px;
+
+    font-weight:800;
+
+    letter-spacing:1.5px;
+
+    text-transform:uppercase;
+
+}
+
+
+.section-heading h2{
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
+
+    font-size:
+        clamp(
+            34px,
+            5vw,
+            52px
+        );
+
+    line-height:1.1;
+
+    color:var(--dark);
+
+    margin-bottom:17px;
+
+    font-weight:800;
+
+}
+
+
+.section-heading h2 span{
+
+    color:var(--primary);
+
+}
+
+
+.section-heading p{
+
+    color:var(--muted);
+
+    font-size:15px;
+
+}
+
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.about-section{
+
+    background:white;
+
+}
+
+
+.about-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1.4fr
+        1fr
+        1fr;
+
+    gap:22px;
+
+}
+
+
+.about-content{
+
+    grid-row:
+        span 2;
+
+    padding:38px;
+
+    border-radius:var(--radius-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            #101b2d,
+            #17253a
+        );
+
+    color:white;
+
+    box-shadow:var(--shadow);
+
+}
+
+
+.about-icon{
+
+    width:60px;
+    height:60px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:25px;
+
+    border-radius:17px;
+
+    background:
+        rgba(255,90,31,.15);
+
+    color:#ff7845;
+
+    font-size:25px;
+
+}
+
+
+.about-content h3{
+
+    font-size:25px;
+
+    margin-bottom:15px;
+
+}
+
+
+.about-content p{
+
+    color:#b4bfce;
+
+    font-size:14px;
+
+    margin-bottom:18px;
+
+}
+
+
+.about-highlight{
+
+    padding:30px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    background:#fff;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:.3s ease;
+
+}
+
+
+.about-highlight:hover{
+
+    transform:
+        translateY(-6px);
+
+    box-shadow:var(--shadow);
+
+}
+
+
+.highlight-number{
+
+    color:var(--primary);
+
+    font-size:12px;
+
+    font-weight:800;
+
+    margin-bottom:12px;
+
+}
+
+
+.about-highlight h3{
+
+    font-size:19px;
+
+    margin-bottom:8px;
+
+}
+
+
+.about-highlight p{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+
+/* =========================================================
+   SPORTS SECTION
+   ========================================================= */
+
+.sports-section{
+
+    background:
+        #f3f6fa;
+
+}
+
+
+.sports-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(7,1fr);
+
+    gap:15px;
+
+}
+
+
+.sport-card{
+
+    min-height:170px;
+
+    padding:25px 15px;
 
     display:flex;
 
@@ -868,1703 +1265,1684 @@ section > h2::after{
 
     justify-content:center;
 
-    padding:
-        30px 20px;
-
     text-align:center;
 
     background:white;
 
     border:
-        1px solid var(--border);
+        1px solid #e6eaf0;
 
-    border-top:
-        4px solid var(--primary);
-
-    border-radius:
-        var(--radius-md);
+    border-radius:18px;
 
     box-shadow:
-        var(--shadow-sm);
-
-    overflow:hidden;
-
-    font-size:48px;
+        0 5px 18px
+        rgba(0,0,0,.04);
 
     transition:
         transform .3s ease,
         box-shadow .3s ease,
-        border-color .3s ease;
+        border .3s ease;
+
 }
 
-.sportCard::before{
 
-    content:"";
+.sport-card:hover{
 
-    position:absolute;
-
-    width:130px;
-    height:130px;
-
-    top:-70px;
-    right:-55px;
-
-    border-radius:50%;
-
-    background:
-        rgba(7,87,201,.06);
-
-    transition:
-        transform .4s ease;
-}
-
-.sportCard::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:100px;
-    height:100px;
-
-    bottom:-60px;
-    left:-45px;
-
-    border-radius:50%;
-
-    background:
-        rgba(12,155,98,.07);
-}
-
-.sportCard:hover{
-
-    transform:translateY(-9px);
+    transform:
+        translateY(-8px);
 
     border-color:
-        rgba(7,87,201,.3);
+        rgba(255,90,31,.35);
 
     box-shadow:
-        var(--shadow-lg);
+        0 18px 40px
+        rgba(0,0,0,.1);
+
 }
 
-.sportCard:hover::before{
-    transform:scale(1.5);
+
+.sport-icon{
+
+    width:62px;
+    height:62px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:13px;
+
+    border-radius:17px;
+
+    background:
+        #fff3ed;
+
+    font-size:30px;
+
 }
 
-.sportCard h3{
+
+.sport-card h3{
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
+
+    font-size:18px;
+
+    line-height:1.2;
+
+}
+
+
+.sport-card p{
+
+    margin-top:3px;
+
+    color:#9aa3b1;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.6px;
+
+}
+
+
+/* =========================================================
+   COMPETITION SECTION
+   ========================================================= */
+
+.competition-section{
+
+    background:white;
+
+}
+
+
+.competition-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:24px;
+
+}
+
+
+.competition-card{
 
     position:relative;
 
-    z-index:2;
+    padding:38px;
 
-    margin-top:14px;
+    overflow:hidden;
 
-    color:var(--navy);
+    border-radius:24px;
 
-    font-size:20px;
+    background:#f7f8fa;
 
-    line-height:1.4;
+    border:
+        1px solid #e5e7eb;
 
-    font-weight:900;
+    transition:.3s ease;
+
 }
 
-.sportCard p{
 
-    position:relative;
+.competition-card:hover{
 
-    z-index:2;
+    transform:
+        translateY(-8px);
 
-    margin-top:7px;
+    box-shadow:var(--shadow);
+
+}
+
+
+.competition-card.featured{
+
+    color:white;
+
+    background:
+        linear-gradient(
+            145deg,
+            #101b2d,
+            #192940
+        );
+
+    border-color:
+        transparent;
+
+    transform:
+        translateY(-10px);
+
+}
+
+
+.competition-card.featured:hover{
+
+    transform:
+        translateY(-16px);
+
+}
+
+
+.competition-number{
+
+    position:absolute;
+
+    top:20px;
+
+    right:25px;
+
+    font-size:45px;
+
+    font-weight:800;
+
+    opacity:.07;
+
+}
+
+
+.competition-icon{
+
+    font-size:48px;
+
+    margin-bottom:22px;
+
+}
+
+
+.competition-card h3{
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
+
+    font-size:27px;
+
+    line-height:1.15;
+
+    margin-bottom:15px;
+
+}
+
+
+.competition-card p{
 
     color:var(--muted);
 
     font-size:14px;
 
-    line-height:1.6;
-
-    font-weight:600;
 }
 
 
-/* =========================================================
-   16. TRAINING DETAILS
-   ========================================================= */
+.competition-card.featured p{
 
-.trainingDetails{
+    color:#aeb9c9;
 
-    background:white;
-
-    text-align:center;
-}
-
-.trainingDetails .trainerGrid{
-
-    width:min(1050px,100%);
-
-    margin:auto;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
-    gap:20px;
 }
 
 
-/* =========================================================
-   17. TRAINER GRID
-   ========================================================= */
+.competition-label{
 
-#trainers{
+    display:inline-block;
+
+    margin-top:25px;
+
+    padding:6px 11px;
+
+    border-radius:50px;
+
+    color:var(--primary);
 
     background:
-        linear-gradient(
-            180deg,
-            #f7fbff,
-            #ffffff
-        );
-}
+        rgba(255,90,31,.1);
 
-.trainerGrid{
+    font-size:10px;
 
-    width:min(1050px,100%);
+    font-weight:800;
 
-    margin:auto;
+    text-transform:uppercase;
 
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,minmax(0,1fr));
-
-    gap:22px;
 }
 
 
-/* =========================================================
-   18. TRAINER CARD
-   ========================================================= */
+.competition-cta{
 
-.trainerCard{
+    margin-top:45px;
 
-    position:relative;
+    padding:25px 30px;
 
-    padding:
-        30px 25px;
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:25px;
+
+    border-radius:18px;
+
+    background:
+        #fff4ef;
+
+    border:
+        1px solid #ffe0d2;
+
+}
+
+
+.competition-cta div{
 
     display:flex;
 
     flex-direction:column;
 
-    align-items:center;
-
-    justify-content:center;
-
-    min-height:175px;
-
-    text-align:center;
-
-    color:white;
-
-    background:
-
-        linear-gradient(
-            135deg,
-            var(--primary-dark),
-            var(--primary),
-            #087e9c
-        );
-
-    border-radius:
-        var(--radius-md);
-
-    box-shadow:
-        0 15px 40px rgba(7,60,125,.17);
-
-    overflow:hidden;
-
-    transition:
-        transform .3s ease,
-        box-shadow .3s ease;
 }
 
-.trainerCard::before{
 
-    content:"";
+.competition-cta span{
 
-    position:absolute;
+    color:#7b8492;
 
-    width:190px;
-    height:190px;
+    font-size:12px;
 
-    top:-110px;
-    right:-70px;
-
-    border-radius:50%;
-
-    background:
-        rgba(255,255,255,.09);
 }
 
-.trainerCard::after{
 
-    content:"";
+.competition-cta strong{
 
-    position:absolute;
-
-    width:140px;
-    height:140px;
-
-    bottom:-90px;
-    left:-55px;
-
-    border-radius:50%;
-
-    background:
-        rgba(12,155,98,.16);
-}
-
-.trainerCard:hover{
-
-    transform:translateY(-7px);
-
-    box-shadow:
-        0 23px 50px rgba(7,60,125,.24);
-}
-
-.trainerCard h3{
-
-    position:relative;
-
-    z-index:2;
-
-    margin-bottom:10px;
-
-    color:white;
-
-    font-size:
-        clamp(19px,2vw,25px);
-
-    line-height:1.5;
-
-    font-weight:900;
-}
-
-.trainerCard p{
-
-    position:relative;
-
-    z-index:2;
-
-    margin-bottom:15px;
-
-    color:
-        rgba(255,255,255,.85);
-
-    font-size:16px;
-
-    font-weight:600;
-}
-
-.trainerCard a{
-
-    position:relative;
-
-    z-index:2;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:
-        8px 16px;
-
-    color:white;
-
-    background:
-        rgba(255,255,255,.12);
-
-    border:
-        1px solid rgba(255,255,255,.25);
-
-    border-radius:50px;
+    color:var(--dark);
 
     font-size:18px;
 
-    font-weight:900;
-
-    text-decoration:none;
-
-    transition:.25s ease;
-}
-
-.trainerCard a:hover{
-
-    color:var(--primary-dark);
-
-    background:white;
-
-    transform:translateY(-2px);
 }
 
 
 /* =========================================================
-   19. GALLERY
+   FACILITIES
    ========================================================= */
 
-#gallery{
+.facilities-section{
 
-    background:
+    background:#f3f6fa;
 
-        linear-gradient(
-            180deg,
-            #eef7ff,
-            #f8fbff
-        );
 }
 
-#gallery > p{
 
-    margin:
-        -23px auto
-        38px;
-
-    color:var(--text-light);
-
-    font-size:17px;
-
-    text-align:center;
-
-    font-weight:500;
-}
-
-.galleryGrid{
-
-    width:min(var(--max-width),100%);
-
-    margin:auto;
+.facilities-grid{
 
     display:grid;
 
     grid-template-columns:
-        repeat(3,minmax(0,1fr));
+        repeat(2,1fr);
 
-    gap:22px;
+    gap:18px;
+
 }
 
-.galleryCard{
+
+.facility-card{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    padding:26px;
 
     background:white;
 
     border:
-        1px solid var(--border);
+        1px solid #e5e9ef;
 
-    border-radius:
-        var(--radius-md);
+    border-radius:18px;
 
-    overflow:hidden;
+    transition:.3s ease;
 
-    box-shadow:
-        var(--shadow-md);
-
-    transition:
-        transform .3s ease,
-        box-shadow .3s ease;
 }
 
-.galleryCard:hover{
 
-    transform:translateY(-7px);
+.facility-card:hover{
 
-    box-shadow:
-        var(--shadow-lg);
+    transform:
+        translateY(-5px);
+
+    box-shadow:var(--shadow-sm);
+
 }
 
-.galleryCard img{
 
-    width:100%;
+.facility-icon{
 
-    height:280px;
+    flex:none;
 
-    display:block;
+    width:55px;
+    height:55px;
 
-    object-fit:cover;
+    display:flex;
 
-    transition:
-        transform .45s ease;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:
+        #fff0e9;
+
+    color:var(--primary);
+
+    font-size:21px;
+
 }
 
-.galleryCard:hover img{
-    transform:scale(1.04);
+
+.facility-card h3{
+
+    font-size:18px;
+
+    margin-bottom:5px;
+
 }
 
-.galleryCard video{
 
-    width:100%;
+.facility-card p{
 
-    height:280px;
+    color:var(--muted);
 
-    display:block;
+    font-size:13px;
 
-    object-fit:cover;
-
-    background:#06152b;
 }
 
 
 /* =========================================================
-   20. CONTACT
+   MISSION
    ========================================================= */
 
-#contact{
-
-    background:white;
-}
-
-.contactContainer{
-
-    width:min(var(--max-width),100%);
-
-    margin:auto;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,minmax(0,1fr));
-
-    gap:22px;
-}
-
-.contactCard{
+.mission-section{
 
     position:relative;
 
-    padding:
-        30px 27px;
-
-    min-height:205px;
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #f2f8ff
-        );
-
-    border:
-        1px solid var(--border);
-
-    border-left:
-        5px solid var(--primary);
-
-    border-radius:
-        var(--radius-md);
-
-    box-shadow:
-        var(--shadow-sm);
+    padding:110px 0;
 
     overflow:hidden;
 
-    transition:
-        transform .3s ease,
-        box-shadow .3s ease;
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #07111f,
+            #142237
+        );
+
 }
 
-.contactCard::after{
+
+.mission-section::before{
 
     content:"";
 
     position:absolute;
 
-    width:120px;
-    height:120px;
+    width:500px;
+    height:500px;
 
-    right:-60px;
-    bottom:-60px;
+    top:-250px;
+    right:-150px;
 
     border-radius:50%;
 
     background:
-        rgba(7,87,201,.06);
-}
+        rgba(255,90,31,.15);
 
-.contactCard:hover{
+    filter:blur(50px);
 
-    transform:translateY(-6px);
-
-    box-shadow:
-        var(--shadow-md);
-}
-
-.contactCard h3{
-
-    position:relative;
-
-    z-index:2;
-
-    margin-bottom:15px;
-
-    color:var(--primary-dark);
-
-    font-size:23px;
-
-    font-weight:900;
-}
-
-.contactCard p{
-
-    position:relative;
-
-    z-index:2;
-
-    margin:6px 0;
-
-    color:#4d6076;
-
-    font-size:17px;
-
-    line-height:1.9;
-
-    font-weight:600;
-}
-
-.contactCard a{
-
-    color:var(--primary);
-
-    font-weight:900;
-
-    text-decoration:none;
-
-    transition:.25s ease;
-}
-
-.contactCard a:hover{
-
-    color:var(--green-dark);
-
-    text-decoration:underline;
 }
 
 
-/* =========================================================
-   21. REGISTRATION SECTION
-   ========================================================= */
+.mission-overlay{
 
-.registrationSection{
+    position:absolute;
 
-    text-align:center;
+    inset:0;
 
-    background:
+    background-image:
 
         linear-gradient(
-            135deg,
-            #061b38,
-            #073e7c
-        );
-
-    color:white;
-}
-
-.registrationSection > h2{
-
-    color:white;
-}
-
-.registrationSection > h2::after{
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--yellow),
-            #ffffff
-        );
-}
-
-.registrationSection p{
-
-    width:min(850px,100%);
-
-    margin:
-        10px auto;
-
-    color:
-        rgba(255,255,255,.88);
-
-    font-size:17px;
-
-    line-height:1.9;
-}
-
-.registrationSection strong{
-
-    color:var(--yellow);
-
-    font-weight:900;
-}
-
-
-/* =========================================================
-   22. FOOTER
-   ========================================================= */
-
-footer{
-
-    position:relative;
-
-    padding:
-        65px
-        20px
-        40px;
-
-    color:white;
-
-    text-align:center;
-
-    background:
-
-        radial-gradient(
-            circle at top center,
-            rgba(7,130,210,.22),
-            transparent 38%
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
         ),
 
         linear-gradient(
-            145deg,
-            #041329,
-            #06254a 50%,
-            #031020
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
         );
 
-    border-top:
-        4px solid var(--primary);
+    background-size:40px 40px;
 
-    overflow:hidden;
 }
 
-footer::before{
 
-    content:"";
-
-    position:absolute;
-
-    width:280px;
-    height:280px;
-
-    top:-190px;
-    left:-100px;
-
-    border-radius:50%;
-
-    background:
-        rgba(12,155,98,.08);
-
-    pointer-events:none;
-}
-
-footer::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:320px;
-    height:320px;
-
-    right:-140px;
-    bottom:-230px;
-
-    border-radius:50%;
-
-    background:
-        rgba(7,87,201,.12);
-
-    pointer-events:none;
-}
-
-footer h2{
+.mission-content{
 
     position:relative;
 
     z-index:2;
 
-    margin-bottom:13px;
+    max-width:900px;
 
-    color:white;
+    margin:auto;
+
+    text-align:center;
+
+}
+
+
+.mission-icon{
+
+    font-size:50px;
+
+    margin-bottom:20px;
+
+}
+
+
+.mission-content .section-tag{
+
+    color:#ff8b5d;
+
+}
+
+
+.mission-content h2{
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
 
     font-size:
-        clamp(25px,4vw,38px);
+        clamp(
+            28px,
+            5vw,
+            48px
+        );
 
-    line-height:1.4;
+    line-height:1.25;
 
-    font-weight:900;
+    margin-bottom:20px;
+
 }
 
-footer > p{
 
-    position:relative;
+.mission-content p{
 
-    z-index:2;
+    max-width:650px;
 
-    margin-top:8px;
+    margin:auto;
 
-    color:
-        rgba(255,255,255,.78);
+    color:#aeb9c9;
 
-    font-size:16px;
+    font-size:14px;
 
-    line-height:1.8;
 }
 
-footer hr{
 
-    position:relative;
+/* =========================================================
+   FOUNDER
+   ========================================================= */
 
-    z-index:2;
+.founder-section{
 
-    width:min(850px,90%);
+    background:white;
 
-    height:1px;
+}
 
-    margin:
-        28px auto;
 
-    border:0;
+.founder-card{
+
+    display:grid;
+
+    grid-template-columns:
+        auto 1fr auto;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:38px;
+
+    border-radius:25px;
 
     background:
         linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.2),
-            transparent
+            135deg,
+            #f8fafc,
+            #ffffff
         );
-}
-
-
-/* =========================================================
-   23. REGISTRATION FOOTER
-   ========================================================= */
-
-.registration{
-
-    position:relative;
-
-    z-index:2;
-
-    margin-top:20px;
-
-    color:#dcecff !important;
-
-    font-size:15px !important;
-
-    line-height:1.9;
-
-    font-weight:700;
-}
-
-.registration strong{
-
-    color:var(--yellow);
-
-    font-weight:900;
-}
-
-
-/* =========================================================
-   24. PROJECT CREDITS
-   ========================================================= */
-
-.credits{
-
-    position:relative;
-
-    z-index:2;
-
-    width:min(650px,100%);
-
-    margin:
-        28px auto;
-
-    padding:
-        27px 22px;
-
-    text-align:center;
-
-    background:
-        rgba(255,255,255,.045);
 
     border:
-        1px solid rgba(255,255,255,.11);
+        1px solid #e4e8ee;
 
-    border-radius:
-        var(--radius-md);
-}
+    box-shadow:var(--shadow-sm);
 
-.credits h2{
-
-    margin-bottom:16px;
-
-    color:var(--yellow);
-
-    font-size:24px;
-
-    font-weight:900;
-}
-
-.credits p,
-.credits li{
-
-    color:white !important;
-
-    font-size:19px !important;
-
-    font-weight:800 !important;
-
-    line-height:1.7;
-}
-
-.credits p strong{
-
-    color:#e3f1ff;
-
-    font-weight:900 !important;
-}
-
-.credits ul{
-
-    list-style:none;
-
-    padding:0;
-
-    margin:
-        12px 0 0;
 }
 
 
-/* =========================================================
-   25. WEBSITE CREDIT
-   ========================================================= */
+.founder-icon{
 
-.website-credit{
+    width:90px;
+    height:90px;
 
-    position:relative;
+    display:flex;
 
-    z-index:2;
+    align-items:center;
+    justify-content:center;
 
-    width:min(800px,100%);
-
-    margin:
-        25px auto 10px;
-
-    padding:
-        17px 20px;
-
-    color:#dbeeff !important;
-
-    background:
-        rgba(7,87,201,.13);
-
-    border:
-        1px solid rgba(94,168,255,.2);
-
-    border-radius:
-        14px;
-
-    font-size:17px !important;
-
-    line-height:1.8;
-
-    font-weight:700;
-
-    text-align:center;
-}
-
-.website-credit strong{
-
-    color:var(--yellow) !important;
-
-    font-size:21px !important;
-
-    font-weight:900;
-
-    letter-spacing:.02em;
-}
-
-
-/* =========================================================
-   26. STUDENT CREDIT
-   ========================================================= */
-
-.student-credit{
-
-    position:relative;
-
-    z-index:2;
-
-    width:min(850px,100%);
-
-    margin:
-        14px auto 0;
-
-    color:
-        rgba(255,255,255,.58) !important;
-
-    font-size:13px !important;
-
-    line-height:1.8;
-
-    text-align:center;
-}
-
-.student-credit a{
-
-    color:var(--yellow);
-
-    font-weight:900;
-
-    text-decoration:none;
-
-    transition:.25s ease;
-}
-
-.student-credit a:hover{
+    border-radius:25px;
 
     color:white;
 
-    text-decoration:underline;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            #ff8b4d
+        );
+
+    font-size:35px;
+
 }
 
 
-/* =========================================================
-   27. LOADING
-   ========================================================= */
-
-.loading{
-
-    grid-column:1/-1;
-
-    padding:
-        70px 20px;
+.founder-content span{
 
     color:var(--primary);
 
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+
+.founder-content h2{
+
+    font-family:
+        "Baloo 2",
+        sans-serif;
+
+    font-size:34px;
+
+    line-height:1.1;
+
+    margin:4px 0 8px;
+
+}
+
+
+.founder-content p{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+
+.founder-contact{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+
+.founder-contact a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:11px 15px;
+
+    border-radius:10px;
+
+    background:#f2f4f7;
+
+    color:var(--dark);
+
+    font-size:13px;
+
+    font-weight:700;
+
+    transition:.25s ease;
+
+}
+
+
+.founder-contact a:hover{
+
+    color:var(--primary);
+
+    background:#fff0e9;
+
+}
+
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+
+.contact-section{
+
+    background:
+        #f3f6fa;
+
+}
+
+
+.contact-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:16px;
+
+}
+
+
+.contact-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:22px;
+
+    background:white;
+
+    border:
+        1px solid #e3e7ec;
+
+    border-radius:17px;
+
+    transition:.3s ease;
+
+}
+
+
+.contact-card:hover{
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+
+.contact-icon{
+
+    width:48px;
+    height:48px;
+
+    flex:none;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    color:var(--primary);
+
+    background:#fff0e9;
+
+}
+
+
+.contact-card div:last-child{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.contact-card span{
+
+    color:#8a94a3;
+
+    font-size:10px;
+
+}
+
+
+.contact-card strong{
+
+    font-size:14px;
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer{
+
+    padding:
+        65px 0
+        25px;
+
+    background:
+        #06101c;
+
+    color:white;
+
+}
+
+
+.footer-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1.5fr
+        1fr
+        1fr
+        1fr;
+
+    gap:50px;
+
+    padding-bottom:45px;
+
+}
+
+
+.footer-brand{
+
+    max-width:350px;
+
+}
+
+
+.footer-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+
+.footer-logo .logo-icon{
+
+    width:44px;
+    height:44px;
+
+    font-size:22px;
+
+}
+
+
+.footer-logo div:last-child{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+.footer-logo strong{
+
     font-size:20px;
 
-    font-weight:800;
+}
 
-    text-align:center;
+
+.footer-logo span{
+
+    color:#8793a4;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+}
+
+
+.footer-brand p{
+
+    color:#8995a7;
+
+    font-size:12px;
+
+    margin-bottom:8px;
+
+}
+
+
+.footer-links{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+
+.footer-links h3{
+
+    margin-bottom:10px;
+
+    font-size:14px;
+
+}
+
+
+.footer-links a{
+
+    color:#8995a7;
+
+    font-size:12px;
+
+    transition:.2s ease;
+
+}
+
+
+.footer-links a:hover{
+
+    color:#ff7845;
+
+    transform:
+        translateX(3px);
+
+}
+
+
+.footer-links i{
+
+    width:20px;
+
 }
 
 
 /* =========================================================
-   28. FOCUS
+   FOOTER BOTTOM
    ========================================================= */
 
-a:focus-visible{
+.footer-bottom{
 
-    outline:
-        3px solid var(--yellow);
+    display:flex;
 
-    outline-offset:4px;
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding-top:22px;
+
+    border-top:
+        1px solid rgba(255,255,255,.08);
+
+}
+
+
+.footer-bottom p{
+
+    color:#6f7b8c;
+
+    font-size:10px;
+
+}
+
+
+.footer-bottom strong{
+
+    color:#aeb8c6;
+
 }
 
 
 /* =========================================================
-   29. ANIMATIONS
+   WHATSAPP
    ========================================================= */
 
-@keyframes heroReveal{
+.whatsapp-button{
 
-    from{
+    position:fixed;
 
-        opacity:0;
+    right:22px;
+    bottom:22px;
 
-        transform:
-            translateY(30px);
-    }
+    z-index:900;
 
-    to{
+    width:58px;
+    height:58px;
 
-        opacity:1;
+    display:flex;
 
-        transform:
-            translateY(0);
-    }
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#25d366;
+
+    color:white;
+
+    font-size:28px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.25);
+
+    transition:.25s ease;
+
+}
+
+
+.whatsapp-button:hover{
+
+    transform:
+        translateY(-5px)
+        scale(1.05);
+
 }
 
 
 /* =========================================================
-   30. TABLET
+   BACK TO TOP
    ========================================================= */
 
-@media (max-width:1100px){
+.back-to-top{
 
-    .navbar{
+    position:fixed;
 
-        padding-left:22px;
-        padding-right:22px;
+    right:90px;
+    bottom:28px;
 
-        gap:15px;
-    }
+    z-index:899;
 
-    nav{
+    width:44px;
+    height:44px;
 
-        gap:2px;
-    }
+    display:flex;
 
-    nav a{
+    align-items:center;
+    justify-content:center;
 
-        padding:
-            7px 8px;
+    border:0;
 
-        font-size:14px;
-    }
+    border-radius:12px;
 
-    .sportsGrid{
+    background:
+        var(--dark);
 
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-    }
+    color:white;
 
-    .galleryGrid{
+    cursor:pointer;
 
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-    }
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:
+        translateY(15px);
+
+    transition:.3s ease;
+
+}
+
+
+.back-to-top.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+        translateY(0);
+
 }
 
 
 /* =========================================================
-   31. SMALL LAPTOP / TABLET
+   SCROLL REVEAL
    ========================================================= */
 
-@media (max-width:900px){
+.sport-card,
+.facility-card,
+.competition-card,
+.about-highlight,
+.contact-card{
 
-    .navbar{
+    opacity:0;
 
-        position:relative;
+    transform:
+        translateY(25px);
 
-        min-height:auto;
+    transition:
+        opacity .6s ease,
+        transform .6s ease,
+        box-shadow .3s ease;
 
-        padding:
-            16px 20px;
+}
 
-        flex-direction:column;
 
-        align-items:center;
+.sport-card.visible,
+.facility-card.visible,
+.competition-card.visible,
+.about-highlight.visible,
+.contact-card.visible{
 
-        justify-content:center;
+    opacity:1;
 
-        gap:12px;
-    }
+    transform:
+        translateY(0);
 
-    .logo{
-
-        align-items:center;
-
-        text-align:center;
-    }
-
-    nav{
-
-        width:100%;
-
-        justify-content:center;
-
-        gap:5px;
-    }
-
-    nav a{
-
-        font-size:14px;
-
-        min-height:38px;
-
-        padding:
-            7px 9px;
-    }
-
-    .adminBtn{
-
-        margin-left:2px;
-
-        padding:
-            8px 14px !important;
-    }
-
-    .hero{
-
-        min-height:
-            calc(100vh - 125px);
-
-        height:auto;
-
-        padding:
-            90px
-            20px
-            100px;
-    }
-
-    .sportsGrid{
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-
-        gap:17px;
-    }
-
-    .trainingDetails .trainerGrid{
-
-        grid-template-columns:
-            repeat(3,minmax(0,1fr));
-    }
-
-    .trainerGrid{
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-    }
-
-    .contactContainer{
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-    }
 }
 
 
 /* =========================================================
-   32. MOBILE
+   RESPONSIVE — TABLET
    ========================================================= */
 
-@media (max-width:650px){
+@media(max-width:1100px){
 
-    html{
+    .nav-menu{
 
-        scroll-padding-top:20px;
-    }
-
-    .navbar{
-
-        width:100%;
-
-        padding:
-            14px 10px;
-
-        gap:9px;
-    }
-
-    .logo h2{
-
-        font-size:20px;
-
-        white-space:normal;
-
-        line-height:1.3;
-
-        text-align:center;
-    }
-
-    .logo p{
-
-        font-size:11px;
-    }
-
-    nav{
-
-        display:grid;
-
-        grid-template-columns:
-            repeat(3,1fr);
-
-        width:100%;
-
-        gap:5px;
-
-        padding:2px 0;
-    }
-
-    nav a{
-
-        width:100%;
-
-        min-height:39px;
-
-        padding:
-            7px 3px;
-
-        font-size:12px;
-
-        border-radius:9px;
-
-        text-align:center;
-    }
-
-    nav a:not(.adminBtn)::after{
         display:none;
-    }
 
-    .adminBtn{
-
-        width:100%;
-
-        margin:0;
-
-        min-height:39px;
-
-        padding:
-            8px 5px !important;
-
-        font-size:11px !important;
     }
 
 
-    /* HERO */
+    .nav-button{
 
-    .hero{
+        display:none;
 
-        min-height:
-            calc(100svh - 145px);
-
-        padding:
-            70px
-            13px
-            85px;
-
-        background-position:
-            center center;
-    }
-
-    .heroContent{
-        padding:7px;
-    }
-
-    .hero h3{
-
-        margin-bottom:12px;
-
-        padding:
-            6px 12px;
-
-        font-size:18px;
-    }
-
-    .hero h1{
-
-        margin-bottom:10px;
-
-        font-size:
-            clamp(35px,11vw,53px);
-    }
-
-    .hero h2{
-
-        margin-bottom:16px;
-
-        font-size:
-            clamp(19px,5.8vw,25px);
-
-        line-height:1.55;
-    }
-
-    .hero p{
-
-        margin-bottom:25px;
-
-        font-size:15px;
-
-        line-height:1.8;
-    }
-
-    .heroButtons{
-
-        width:100%;
-
-        flex-direction:column;
-
-        gap:9px;
-    }
-
-    .primaryBtn,
-    .secondaryBtn{
-
-        width:
-            min(280px,92%);
-
-        min-height:49px;
-
-        font-size:15px;
     }
 
 
-    /* SECTIONS */
-
-    section{
-
-        padding:
-            62px 13px;
-    }
-
-    section > h2{
-
-        margin-bottom:36px;
-
-        font-size:
-            clamp(27px,8vw,34px);
-    }
-
-    section > h2::after{
-
-        width:52px;
-
-        height:3px;
-
-        margin-top:11px;
-    }
-
-
-    /* ABOUT */
-
-    .about p{
-
-        font-size:16px;
-
-        line-height:1.95;
-    }
-
-
-    /* SPORTS */
-
-    .sportsGrid{
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-
-        gap:12px;
-    }
-
-    .sportCard{
-
-        min-height:165px;
-
-        padding:
-            21px 8px;
-
-        border-radius:17px;
-
-        font-size:37px;
-    }
-
-    .sportCard h3{
-
-        margin-top:10px;
-
-        font-size:16px;
-    }
-
-    .sportCard p{
-
-        font-size:12px;
-
-        line-height:1.5;
-    }
-
-
-    /* TRAINING */
-
-    .trainingDetails .trainerGrid{
-
-        grid-template-columns:1fr;
-
-        gap:13px;
-    }
-
-
-    /* TRAINERS */
-
-    .trainerGrid{
-
-        grid-template-columns:1fr;
-
-        gap:14px;
-    }
-
-    .trainerCard{
-
-        min-height:155px;
-
-        padding:
-            24px 15px;
-
-        border-radius:18px;
-    }
-
-    .trainerCard h3{
-
-        margin-bottom:9px;
-
-        font-size:19px;
-    }
-
-    .trainerCard p{
-
-        font-size:14px;
-    }
-
-    .trainerCard a{
-
-        font-size:16px;
-
-        padding:
-            7px 13px;
-    }
-
-
-    /* GALLERY */
-
-    #gallery > p{
-
-        margin-top:-16px;
-
-        margin-bottom:27px;
-
-        font-size:15px;
-    }
-
-    .galleryGrid{
-
-        grid-template-columns:1fr;
-
-        gap:15px;
-    }
-
-    .galleryCard{
-
-        border-radius:17px;
-    }
-
-    .galleryCard img,
-    .galleryCard video{
-
-        height:240px;
-    }
-
-
-    /* CONTACT */
-
-    .contactContainer{
-
-        grid-template-columns:1fr;
-
-        gap:14px;
-    }
-
-    .contactCard{
-
-        min-height:auto;
-
-        padding:
-            24px 19px;
-
-        border-radius:18px;
-    }
-
-    .contactCard h3{
-
-        margin-bottom:12px;
-
-        font-size:21px;
-    }
-
-    .contactCard p{
-
-        font-size:16px;
-
-        line-height:1.85;
-    }
-
-
-    /* REGISTRATION */
-
-    .registrationSection p{
-
-        font-size:15px;
-
-        line-height:1.85;
-    }
-
-
-    /* FOOTER */
-
-    footer{
-
-        padding:
-            52px 12px
-            30px;
-    }
-
-    footer h2{
-
-        font-size:27px;
-    }
-
-    footer > p{
-
-        font-size:14px;
-    }
-
-    footer hr{
-
-        width:92%;
-
-        margin:
-            24px auto;
-    }
-
-    .registration{
-
-        font-size:13px !important;
-
-        line-height:1.9;
-    }
-
-    .credits{
-
-        padding:
-            22px 13px;
-
-        border-radius:17px;
-    }
-
-    .credits h2{
-
-        font-size:22px;
-    }
-
-    .credits p,
-    .credits li{
-
-        font-size:16px !important;
-    }
-
-    .website-credit{
-
-        padding:
-            16px 11px;
-
-        font-size:14px !important;
-    }
-
-    .website-credit strong{
+    .mobile-menu-btn{
 
         display:block;
 
-        margin:
-            3px 0 0;
-
-        font-size:20px !important;
     }
 
-    .student-credit{
 
-        font-size:12px !important;
+    .hero-container{
 
-        line-height:1.8;
-    }
-}
+        grid-template-columns:
+            1fr;
 
+        text-align:center;
 
-/* =========================================================
-   33. VERY SMALL PHONES
-   ========================================================= */
+        gap:30px;
 
-@media (max-width:390px){
-
-    .navbar{
-
-        padding:
-            12px 8px;
     }
 
-    .logo h2{
-        font-size:18px;
+
+    .hero-content{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+
     }
 
-    nav{
+
+    .hero-description{
+
+        margin-left:auto;
+        margin-right:auto;
+
+    }
+
+
+    .hero-visual{
+
+        min-height:340px;
+
+    }
+
+
+    .sports-grid{
+
+        grid-template-columns:
+            repeat(4,1fr);
+
+    }
+
+
+    .contact-grid{
 
         grid-template-columns:
             repeat(2,1fr);
+
     }
 
-    nav a{
-        font-size:12px;
+
+    .footer-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
     }
 
-    .adminBtn{
-        font-size:11px !important;
-    }
-
-    .hero{
-        padding-top:60px;
-    }
-
-    .hero h1{
-        font-size:37px;
-    }
-
-    .hero h2{
-        font-size:19px;
-    }
-
-    .hero p{
-        font-size:14px;
-    }
-
-    .sportCard{
-
-        min-height:145px;
-
-        font-size:33px;
-    }
-
-    .sportCard h3{
-        font-size:15px;
-    }
-
-    .galleryCard img,
-    .galleryCard video{
-        height:210px;
-    }
-
-    footer h2{
-        font-size:24px;
-    }
-
-    .website-credit strong{
-        font-size:18px !important;
-    }
 }
 
 
 /* =========================================================
-   34. REDUCED MOTION
+   RESPONSIVE — MOBILE
    ========================================================= */
 
-@media (prefers-reduced-motion:reduce){
+@media(max-width:700px){
 
-    *,
-    *::before,
-    *::after{
+    .container{
 
-        scroll-behavior:auto !important;
+        width:
+            calc(100% - 28px);
 
-        animation-duration:.01ms !important;
-
-        animation-iteration-count:1 !important;
-
-        transition-duration:.01ms !important;
     }
+
+
+    .nav-container{
+
+        width:
+            calc(100% - 28px);
+
+    }
+
+
+    .logo{
+
+        min-width:0;
+
+    }
+
+
+    .logo-text strong{
+
+        font-size:17px;
+
+    }
+
+
+    .logo-text span{
+
+        font-size:8px;
+
+    }
+
+
+    .hero{
+
+        min-height:auto;
+
+        padding:
+            125px 0
+            70px;
+
+    }
+
+
+    .hero-container{
+
+        width:
+            calc(100% - 28px);
+
+    }
+
+
+    .hero h1{
+
+        font-size:43px;
+
+        letter-spacing:-1px;
+
+    }
+
+
+    .hero-description{
+
+        font-size:13px;
+
+        line-height:1.8;
+
+    }
+
+
+    .hero-buttons{
+
+        width:100%;
+
+        flex-direction:column;
+
+    }
+
+
+    .hero-buttons .btn{
+
+        width:100%;
+
+    }
+
+
+    .hero-stats{
+
+        width:100%;
+
+        justify-content:
+            space-between;
+
+        gap:10px;
+
+        margin-top:35px;
+
+    }
+
+
+    .hero-stat strong{
+
+        font-size:23px;
+
+    }
+
+
+    .hero-stat span{
+
+        font-size:9px;
+
+    }
+
+
+    .hero-visual{
+
+        min-height:280px;
+
+    }
+
+
+    .hero-trophy{
+
+        width:230px;
+        height:230px;
+
+    }
+
+
+    .trophy-glow{
+
+        width:230px;
+        height:230px;
+
+    }
+
+
+    .trophy-circle{
+
+        width:160px;
+        height:160px;
+
+    }
+
+
+    .trophy-circle i{
+
+        font-size:70px;
+
+    }
+
+
+    .floating-card{
+
+        padding:10px;
+
+    }
+
+
+    .floating-card i{
+
+        width:34px;
+        height:34px;
+
+    }
+
+
+    .floating-card strong{
+
+        font-size:10px;
+
+    }
+
+
+    .floating-card span{
+
+        font-size:8px;
+
+    }
+
+
+    .card-one{
+
+        right:-5px;
+
+        top:15px;
+
+    }
+
+
+    .card-two{
+
+        left:-5px;
+
+        bottom:15px;
+
+    }
+
+
+    .section{
+
+        padding:70px 0;
+
+    }
+
+
+    .section-heading{
+
+        margin-bottom:35px;
+
+    }
+
+
+    .section-heading h2{
+
+        font-size:35px;
+
+    }
+
+
+    .section-heading p{
+
+        font-size:13px;
+
+    }
+
+
+    .about-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .about-content{
+
+        grid-row:auto;
+
+        padding:28px;
+
+    }
+
+
+    .sports-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:12px;
+
+    }
+
+
+    .sport-card{
+
+        min-height:145px;
+
+        padding:20px 10px;
+
+    }
+
+
+    .sport-icon{
+
+        width:55px;
+        height:55px;
+
+        font-size:27px;
+
+    }
+
+
+    .sport-card h3{
+
+        font-size:16px;
+
+    }
+
+
+    .competition-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .competition-card.featured{
+
+        transform:none;
+
+    }
+
+
+    .competition-card.featured:hover{
+
+        transform:
+            translateY(-8px);
+
+    }
+
+
+    .competition-cta{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+    .facilities-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .facility-card{
+
+        padding:20px;
+
+    }
+
+
+    .mission-section{
+
+        padding:75px 0;
+
+    }
+
+
+    .mission-content h2{
+
+        font-size:29px;
+
+    }
+
+
+    .founder-card{
+
+        grid-template-columns:1fr;
+
+        text-align:center;
+
+    }
+
+
+    .founder-icon{
+
+        margin:auto;
+
+    }
+
+
+    .founder-contact{
+
+        align-items:stretch;
+
+    }
+
+
+    .contact-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .footer{
+
+        padding-top:50px;
+
+    }
+
+
+    .footer-grid{
+
+        grid-template-columns:1fr;
+
+        gap:30px;
+
+    }
+
+
+    .footer-bottom{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+
+    .whatsapp-button{
+
+        width:52px;
+        height:52px;
+
+        right:17px;
+        bottom:17px;
+
+        font-size:25px;
+
+    }
+
+
+    .back-to-top{
+
+        right:78px;
+
+        bottom:21px;
+
+    }
+
 }
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media(max-width:380px){
+
+    .hero h1{
+
+        font-size:37px;
+
+    }
+
+
+    .sports-grid{
+
+        gap:9px;
+
+    }
+
+
+    .sport-card{
+
+        min-height:135px;
+
+    }
+
+
+    .sport-icon{
+
+        width:48px;
+        height:48px;
+
+        font-size:23px;
+
+    }
+
+
+    .sport-card h3{
+
+        font-size:14px;
+
+    }
+
+
+    .hero-stats{
+
+        gap:5px;
+
+    }
+
+}
+```
