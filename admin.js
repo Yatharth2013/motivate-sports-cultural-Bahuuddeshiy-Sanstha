@@ -43,14 +43,14 @@ const db = createClient(
 
    Bucket name:
 
-   club-media
+   club_media
 
    Make it PUBLIC if your main website
    should display the uploaded photos/videos.
 */
 
 const MEDIA_BUCKET =
-    "club-media";
+    "club_media";
 
 
 /* =========================================================
