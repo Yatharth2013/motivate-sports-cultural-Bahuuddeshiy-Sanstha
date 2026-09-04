@@ -1975,7 +1975,661 @@ window.searchTable =
 window.showToast =
     showToast;
 
+/* =========================================================
+   SUPABASE STORAGE — PHOTO / VIDEO UPLOAD
+   ========================================================= */
 
+/*
+   STORAGE BUCKET
+
+   Create this bucket in:
+   Supabase Dashboard
+   → Storage
+   → New Bucket
+   → club-media
+
+   For a public website, make the bucket PUBLIC.
+*/
+
+const MEDIA_BUCKET = "club-media";
+
+
+/* =========================================================
+   UPLOAD FILE TO SUPABASE STORAGE
+   ========================================================= */
+
+async function uploadMedia(file, folder = "uploads") {
+
+    if (!file) {
+
+        throw new Error("Please select a file.");
+
+    }
+
+
+    /* ---------- CHECK FILE TYPE ---------- */
+
+    const allowedTypes = [
+
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif",
+
+        "video/mp4",
+        "video/webm",
+        "video/quicktime"
+
+    ];
+
+
+    if (!allowedTypes.includes(file.type)) {
+
+        throw new Error(
+            "Only JPG, PNG, WEBP, GIF, MP4, WEBM and MOV files are allowed."
+        );
+
+    }
+
+
+    /* ---------- FILE SIZE ---------- */
+
+    const maxImageSize = 10 * 1024 * 1024; // 10 MB
+    const maxVideoSize = 100 * 1024 * 1024; // 100 MB
+
+
+    if (
+        file.type.startsWith("image/") &&
+        file.size > maxImageSize
+    ) {
+
+        throw new Error(
+            "Image must be smaller than 10 MB."
+        );
+
+    }
+
+
+    if (
+        file.type.startsWith("video/") &&
+        file.size > maxVideoSize
+    ) {
+
+        throw new Error(
+            "Video must be smaller than 100 MB."
+        );
+
+    }
+
+
+    /* ---------- CREATE UNIQUE FILE NAME ---------- */
+
+    const extension =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const uniqueName =
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10) +
+        "." +
+        extension;
+
+
+    const filePath =
+        folder +
+        "/" +
+        uniqueName;
+
+
+    console.log(
+        "Uploading:",
+        filePath
+    );
+
+
+    /* ---------- UPLOAD ---------- */
+
+    const {
+        data,
+        error
+    } = await db.storage
+        .from(MEDIA_BUCKET)
+        .upload(
+            filePath,
+            file,
+            {
+                cacheControl: "3600",
+                upsert: false,
+                contentType: file.type
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "SUPABASE STORAGE ERROR:",
+            error
+        );
+
+        throw error;
+
+    }
+
+
+    console.log(
+        "Upload successful:",
+        data
+    );
+
+
+    /* ---------- GET PUBLIC URL ---------- */
+
+    const {
+        data: publicData
+    } = db.storage
+        .from(MEDIA_BUCKET)
+        .getPublicUrl(filePath);
+
+
+    const publicUrl =
+        publicData?.publicUrl;
+
+
+    if (!publicUrl) {
+
+        throw new Error(
+            "Could not generate public URL."
+        );
+
+    }
+
+
+    console.log(
+        "Public URL:",
+        publicUrl
+    );
+
+
+    return {
+
+        path: filePath,
+
+        url: publicUrl,
+
+        type: file.type,
+
+        name: file.name
+
+    };
+
+}
+
+
+/* =========================================================
+   DELETE MEDIA FROM STORAGE
+   ========================================================= */
+
+async function deleteMedia(filePath) {
+
+    if (!filePath) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await db.storage
+            .from(MEDIA_BUCKET)
+            .remove([
+                filePath
+            ]);
+
+
+        if (error) {
+
+            console.error(
+                "DELETE MEDIA ERROR:",
+                error
+            );
+
+            return false;
+
+        }
+
+
+        console.log(
+            "Media deleted:",
+            filePath
+        );
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "DELETE MEDIA EXCEPTION:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   HANDLE PHOTO UPLOAD
+   ========================================================= */
+
+async function handlePhotoUpload(
+    inputId,
+    previewId = null,
+    folder = "photos"
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+
+    if (!input) {
+
+        console.warn(
+            "Photo input not found:",
+            inputId
+        );
+
+        return null;
+
+    }
+
+
+    const file =
+        input.files?.[0];
+
+
+    if (!file) {
+
+        showToast(
+            "Please select a photo."
+        );
+
+        return null;
+
+    }
+
+
+    try {
+
+        showToast(
+            "Uploading photo..."
+        );
+
+
+        const result =
+            await uploadMedia(
+                file,
+                folder
+            );
+
+
+        /* ---------- PREVIEW ---------- */
+
+        if (previewId) {
+
+            const preview =
+                document.getElementById(
+                    previewId
+                );
+
+
+            if (preview) {
+
+                preview.src =
+                    result.url;
+
+                preview.style.display =
+                    "block";
+
+            }
+
+        }
+
+
+        showToast(
+            "Photo uploaded successfully!"
+        );
+
+
+        return result;
+
+
+    } catch (error) {
+
+        console.error(
+            "PHOTO UPLOAD ERROR:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Photo upload failed."
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   HANDLE VIDEO UPLOAD
+   ========================================================= */
+
+async function handleVideoUpload(
+    inputId,
+    previewId = null,
+    folder = "videos"
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+
+    if (!input) {
+
+        console.warn(
+            "Video input not found:",
+            inputId
+        );
+
+        return null;
+
+    }
+
+
+    const file =
+        input.files?.[0];
+
+
+    if (!file) {
+
+        showToast(
+            "Please select a video."
+        );
+
+        return null;
+
+    }
+
+
+    try {
+
+        showToast(
+            "Uploading video..."
+        );
+
+
+        const result =
+            await uploadMedia(
+                file,
+                folder
+            );
+
+
+        /* ---------- VIDEO PREVIEW ---------- */
+
+        if (previewId) {
+
+            const preview =
+                document.getElementById(
+                    previewId
+                );
+
+
+            if (preview) {
+
+                preview.src =
+                    result.url;
+
+                preview.style.display =
+                    "block";
+
+                preview.load();
+
+            }
+
+        }
+
+
+        showToast(
+            "Video uploaded successfully!"
+        );
+
+
+        return result;
+
+
+    } catch (error) {
+
+        console.error(
+            "VIDEO UPLOAD ERROR:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Video upload failed."
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTOMATIC PHOTO PREVIEW
+   ========================================================= */
+
+function setupPhotoPreview(
+    inputId,
+    previewId
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+    const preview =
+        document.getElementById(
+            previewId
+        );
+
+
+    if (!input || !preview) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                input.files?.[0];
+
+
+            if (!file) {
+
+                preview.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                event => {
+
+                    preview.src =
+                        event.target.result;
+
+                    preview.style.display =
+                        "block";
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   AUTOMATIC VIDEO PREVIEW
+   ========================================================= */
+
+function setupVideoPreview(
+    inputId,
+    previewId
+) {
+
+    const input =
+        document.getElementById(
+            inputId
+        );
+
+    const preview =
+        document.getElementById(
+            previewId
+        );
+
+
+    if (!input || !preview) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                input.files?.[0];
+
+
+            if (!file) {
+
+                preview.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "video/"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const videoURL =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            preview.src =
+                videoURL;
+
+            preview.style.display =
+                "block";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SETUP MEDIA UPLOADS
+   ========================================================= */
+
+function setupMediaUploads() {
+
+    /*
+       CHANGE THESE IDs IF YOUR HTML
+       USES DIFFERENT IDs.
+    */
+
+
+    setupPhotoPreview(
+        "photoInput",
+        "photoPreview"
+    );
+
+
+    setupVideoPreview(
+        "videoInput",
+        "videoPreview"
+    );
+
+
+    console.log(
+        "Media upload system initialized."
+    );
+
+}
 /* =========================================================
    FINAL DEBUG
    ========================================================= */
