@@ -47,13 +47,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("=================================");
 
     setupNavigation();
+
     setupLogout();
+
     setupForms();
+
+    setupMediaUploads();
 
     await checkAdminSession();
 
 });
-
 
 /* =========================================================
    CHECK ADMIN SESSION
