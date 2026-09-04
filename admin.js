@@ -1,7 +1,7 @@
 /* =========================================================
    RAY SPORTS CLUB — ADMIN PANEL
-   Supabase Admin Dashboard
-   WITH PHOTO / VIDEO UPLOAD
+   SUPABASE ADMIN DASHBOARD
+   PHOTO / VIDEO GALLERY MANAGEMENT
    ========================================================= */
 
 
@@ -16,8 +16,11 @@ const SUPABASE_ANON_KEY =
     "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
 
 
-const { createClient } = supabase;
+/* =========================================================
+   CREATE SUPABASE CLIENT
+   ========================================================= */
 
+const { createClient } = supabase;
 
 const db = createClient(
     SUPABASE_URL,
@@ -28,6 +31,23 @@ const db = createClient(
 /* =========================================================
    STORAGE CONFIG
    ========================================================= */
+
+/*
+   IMPORTANT:
+
+   Create this bucket in:
+
+   Supabase
+   → Storage
+   → New Bucket
+
+   Bucket name:
+
+   club-media
+
+   Make it PUBLIC if your main website
+   should display the uploaded photos/videos.
+*/
 
 const MEDIA_BUCKET =
     "club-media";
@@ -40,8 +60,11 @@ const MEDIA_BUCKET =
 let currentAdmin = null;
 
 let members = [];
+
 let bookings = [];
+
 let payments = [];
+
 let trainers = [];
 
 let currentSection =
@@ -65,8 +88,8 @@ document.addEventListener(
         );
 
         console.log(
-            "Supabase client:",
-            db
+            "Supabase URL:",
+            SUPABASE_URL
         );
 
         console.log(
@@ -85,7 +108,7 @@ document.addEventListener(
 
         setupForms();
 
-        setupMediaUploads();
+        setupMediaSystem();
 
 
         await checkAdminSession();
@@ -105,13 +128,14 @@ async function checkAdminSession() {
         const {
             data,
             error
-        } = await db.auth.getSession();
+        } =
+            await db.auth.getSession();
 
 
         if (error) {
 
             console.error(
-                "Session error:",
+                "SESSION ERROR:",
                 error
             );
 
@@ -141,6 +165,13 @@ async function checkAdminSession() {
 
 
             await loadAllData();
+
+
+            /*
+             * Load gallery after login
+             */
+
+            await loadGallery();
 
         } else {
 
@@ -289,7 +320,9 @@ async function adminLogin(event) {
         passwordInput?.value;
 
 
-    /* ---------- VALIDATION ---------- */
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
 
     if (!email || !password) {
 
@@ -338,7 +371,9 @@ async function adminLogin(event) {
         );
 
 
-        /* ---------- SUPABASE LOGIN ---------- */
+        /* =================================================
+           SUPABASE LOGIN
+           ================================================= */
 
         const {
             data,
@@ -346,9 +381,11 @@ async function adminLogin(event) {
         } =
             await db.auth.signInWithPassword({
 
-                email: email,
+                email:
+                    email,
 
-                password: password
+                password:
+                    password
 
             });
 
@@ -385,6 +422,9 @@ async function adminLogin(event) {
 
 
         await loadAllData();
+
+
+        await loadGallery();
 
 
     } catch (error) {
@@ -433,7 +473,8 @@ async function logout() {
 
         const {
             error
-        } = await db.auth.signOut();
+        } =
+            await db.auth.signOut();
 
 
         if (error) {
@@ -513,7 +554,7 @@ async function logout() {
 
 
 /* =========================================================
-   SETUP FORMS
+   SETUP LOGIN FORMS
    ========================================================= */
 
 function setupForms() {
@@ -536,12 +577,6 @@ function setupForms() {
             "Login button handler attached."
         );
 
-    } else {
-
-        console.warn(
-            "Login button #loginBtn not found."
-        );
-
     }
 
 
@@ -561,7 +596,9 @@ function setupForms() {
         input => {
 
             if (!input) {
+
                 return;
+
             }
 
 
@@ -780,7 +817,7 @@ function updateAdminInfo() {
 
 
 /* =========================================================
-   LOAD ALL DATA
+   LOAD ALL DATABASE DATA
    ========================================================= */
 
 async function loadAllData() {
@@ -826,7 +863,8 @@ async function loadMembers() {
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -886,7 +924,8 @@ async function loadBookings() {
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -946,7 +985,8 @@ async function loadPayments() {
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -1006,7 +1046,8 @@ async function loadTrainers() {
                 .order(
                     "created_at",
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 );
 
@@ -1049,7 +1090,7 @@ async function loadTrainers() {
 
 
 /* =========================================================
-   RENDER DASHBOARD
+   DASHBOARD
    ========================================================= */
 
 function renderDashboard() {
@@ -1060,7 +1101,7 @@ function renderDashboard() {
 
 
 /* =========================================================
-   UPDATE STATISTICS
+   STATISTICS
    ========================================================= */
 
 function updateStatistics() {
@@ -1227,9 +1268,10 @@ function renderMembers() {
 
                             <button
                                 class="delete-btn"
-                                onclick="deleteMember('${escapeHTML(member.id)}')"
-                            >
+                                onclick="deleteMember('${escapeHTML(member.id)}')">
+
                                 🗑️ Delete
+
                             </button>
 
                         </td>
@@ -1328,9 +1370,10 @@ function renderBookings() {
 
                             <button
                                 class="delete-btn"
-                                onclick="deleteBooking('${escapeHTML(booking.id)}')"
-                            >
+                                onclick="deleteBooking('${escapeHTML(booking.id)}')">
+
                                 🗑️ Delete
+
                             </button>
 
                         </td>
@@ -1428,9 +1471,10 @@ function renderPayments() {
 
                             <button
                                 class="delete-btn"
-                                onclick="deletePayment('${escapeHTML(payment.id)}')"
-                            >
+                                onclick="deletePayment('${escapeHTML(payment.id)}')">
+
                                 🗑️ Delete
+
                             </button>
 
                         </td>
@@ -1522,9 +1566,10 @@ function renderTrainers() {
 
                             <button
                                 class="delete-btn"
-                                onclick="deleteTrainer('${escapeHTML(trainer.id)}')"
-                            >
+                                onclick="deleteTrainer('${escapeHTML(trainer.id)}')">
+
                                 🗑️ Delete
+
                             </button>
 
                         </td>
@@ -1815,7 +1860,8 @@ async function updateBookingStatus(
             await db
                 .from("bookings")
                 .update({
-                    status: status
+                    status:
+                        status
                 })
                 .eq(
                     "id",
@@ -1915,26 +1961,459 @@ function searchTable(
 
 
 /* =========================================================
-   SUPABASE STORAGE
-   PHOTO / VIDEO UPLOAD
+   =========================================================
+   PHOTO / VIDEO SYSTEM
+   =========================================================
    ========================================================= */
 
-async function uploadMedia(
-    file,
-    folder = "uploads"
-) {
 
-    if (!file) {
+/* =========================================================
+   SETUP MEDIA SYSTEM
+   ========================================================= */
 
-        throw new Error(
-            "Please select a file."
+function setupMediaSystem() {
+
+    const mediaFile =
+        document.getElementById(
+            "mediaFile"
+        );
+
+
+    const uploadButton =
+        document.getElementById(
+            "uploadBtn"
+        );
+
+
+    const refreshButton =
+        document.getElementById(
+            "refreshGalleryBtn"
+        );
+
+
+    /* =====================================================
+       FILE SELECTION
+       ===================================================== */
+
+    if (mediaFile) {
+
+        mediaFile.addEventListener(
+            "change",
+            handleFileSelection
         );
 
     }
 
 
     /* =====================================================
-       ALLOWED FILE TYPES
+       UPLOAD BUTTON
+       ===================================================== */
+
+    if (uploadButton) {
+
+        uploadButton.addEventListener(
+            "click",
+            uploadSelectedMedia
+        );
+
+    }
+
+
+    /* =====================================================
+       REFRESH GALLERY
+       ===================================================== */
+
+    if (refreshButton) {
+
+        refreshButton.addEventListener(
+            "click",
+            loadGallery
+        );
+
+    }
+
+
+    console.log(
+        "Media system initialized."
+    );
+
+}
+
+
+/* =========================================================
+   FILE SELECTED
+   ========================================================= */
+
+function handleFileSelection() {
+
+    const input =
+        document.getElementById(
+            "mediaFile"
+        );
+
+
+    const selectedFile =
+        document.getElementById(
+            "selectedFile"
+        );
+
+
+    if (!input || !selectedFile) {
+
+        return;
+
+    }
+
+
+    const file =
+        input.files?.[0];
+
+
+    if (!file) {
+
+        selectedFile.textContent =
+            "No file selected";
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       FILE TYPE
+       ===================================================== */
+
+    const isImage =
+        file.type.startsWith(
+            "image/"
+        );
+
+
+    const isVideo =
+        file.type.startsWith(
+            "video/"
+        );
+
+
+    if (!isImage && !isVideo) {
+
+        selectedFile.textContent =
+            "❌ Unsupported file type";
+
+        input.value =
+            "";
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       SIZE
+       ===================================================== */
+
+    const size =
+        formatFileSize(
+            file.size
+        );
+
+
+    const type =
+        isImage
+            ? "📸 Photo"
+            : "🎥 Video";
+
+
+    selectedFile.innerHTML = `
+
+        <strong>
+            ${type}
+        </strong>
+
+        <br>
+
+        ${escapeHTML(file.name)}
+
+        <br>
+
+        <small>
+            ${size}
+        </small>
+
+    `;
+
+
+    console.log(
+        "Selected file:",
+        file
+    );
+
+}
+
+
+/* =========================================================
+   UPLOAD SELECTED MEDIA
+   ========================================================= */
+
+async function uploadSelectedMedia() {
+
+    const input =
+        document.getElementById(
+            "mediaFile"
+        );
+
+
+    const button =
+        document.getElementById(
+            "uploadBtn"
+        );
+
+
+    const message =
+        document.getElementById(
+            "uploadMessage"
+        );
+
+
+    if (!input) {
+
+        return;
+
+    }
+
+
+    const file =
+        input.files?.[0];
+
+
+    /* =====================================================
+       NO FILE
+       ===================================================== */
+
+    if (!file) {
+
+        setUploadMessage(
+            "Please select a photo or video first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       CHECK TYPE
+       ===================================================== */
+
+    const isImage =
+        file.type.startsWith(
+            "image/"
+        );
+
+
+    const isVideo =
+        file.type.startsWith(
+            "video/"
+        );
+
+
+    if (!isImage && !isVideo) {
+
+        setUploadMessage(
+            "Only image and video files are allowed.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       SIZE LIMIT
+       ===================================================== */
+
+    const maxImageSize =
+        10 * 1024 * 1024;
+
+
+    const maxVideoSize =
+        100 * 1024 * 1024;
+
+
+    if (
+        isImage &&
+        file.size >
+        maxImageSize
+    ) {
+
+        setUploadMessage(
+            "Photo is too large. Maximum size is 10 MB.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        isVideo &&
+        file.size >
+        maxVideoSize
+    ) {
+
+        setUploadMessage(
+            "Video is too large. Maximum size is 100 MB.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        /* =================================================
+           DISABLE BUTTON
+           ================================================= */
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "⏳ Uploading...";
+
+        }
+
+
+        setUploadMessage(
+            isImage
+                ? "📸 Uploading photo..."
+                : "🎥 Uploading video...",
+            ""
+        );
+
+
+        /* =================================================
+           UPLOAD
+           ================================================= */
+
+        const result =
+            await uploadMedia(
+                file
+            );
+
+
+        console.log(
+            "UPLOAD RESULT:",
+            result
+        );
+
+
+        /* =================================================
+           SUCCESS
+           ================================================= */
+
+        setUploadMessage(
+            "✅ Media uploaded successfully!",
+            "success"
+        );
+
+
+        showToast(
+            "Media uploaded successfully!"
+        );
+
+
+        /* =================================================
+           RESET FILE INPUT
+           ================================================= */
+
+        input.value =
+            "";
+
+
+        const selectedFile =
+            document.getElementById(
+                "selectedFile"
+            );
+
+
+        if (selectedFile) {
+
+            selectedFile.textContent =
+                "No file selected";
+
+        }
+
+
+        /* =================================================
+           REFRESH GALLERY
+           ================================================= */
+
+        await loadGallery();
+
+
+    } catch (error) {
+
+        console.error(
+            "UPLOAD ERROR:",
+            error
+        );
+
+
+        setUploadMessage(
+            error.message ||
+            "Upload failed.",
+            "error"
+        );
+
+
+        showToast(
+            "Upload failed."
+        );
+
+    } finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "⬆️ Upload to Gallery";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   UPLOAD MEDIA TO SUPABASE STORAGE
+   ========================================================= */
+
+async function uploadMedia(
+    file
+) {
+
+    if (!file) {
+
+        throw new Error(
+            "No file selected."
+        );
+
+    }
+
+
+    /* =====================================================
+       VALID TYPES
        ===================================================== */
 
     const allowedTypes = [
@@ -1963,52 +2442,22 @@ async function uploadMedia(
     ) {
 
         throw new Error(
-            "Only JPG, PNG, WEBP, GIF, MP4, WEBM and MOV files are allowed."
+            "Unsupported file type. Use JPG, PNG, WEBP, GIF, MP4, WEBM or MOV."
         );
 
     }
 
 
     /* =====================================================
-       FILE SIZE LIMIT
+       CREATE FOLDER
        ===================================================== */
 
-    const maxImageSize =
-        10 * 1024 * 1024;
-
-
-    const maxVideoSize =
-        100 * 1024 * 1024;
-
-
-    if (
+    const folder =
         file.type.startsWith(
             "image/"
-        ) &&
-        file.size >
-        maxImageSize
-    ) {
-
-        throw new Error(
-            "Image must be smaller than 10 MB."
-        );
-
-    }
-
-
-    if (
-        file.type.startsWith(
-            "video/"
-        ) &&
-        file.size >
-        maxVideoSize
-    ) {
-
-        throw new Error(
-            "Video must be smaller than 100 MB."
-        );
-
-    }
+        )
+            ? "photos"
+            : "videos";
 
 
     /* =====================================================
@@ -2023,42 +2472,37 @@ async function uploadMedia(
 
 
     /* =====================================================
-       UNIQUE FILE NAME
+       SAFE FILE NAME
        ===================================================== */
 
-    const uniqueName =
+    const uniqueFileName =
 
         Date.now() +
         "_" +
         Math.random()
             .toString(36)
-            .substring(2, 12) +
+            .substring(
+                2,
+                12
+            ) +
         "." +
         extension;
 
 
-    const cleanFolder =
-        String(folder)
-            .replace(
-                /^\/+|\/+$/g,
-                ""
-            );
-
-
     const filePath =
-        cleanFolder +
+        folder +
         "/" +
-        uniqueName;
+        uniqueFileName;
 
 
     console.log(
-        "Uploading file:",
+        "Uploading:",
         filePath
     );
 
 
     /* =====================================================
-       UPLOAD
+       STORAGE UPLOAD
        ===================================================== */
 
     const {
@@ -2066,11 +2510,14 @@ async function uploadMedia(
         error
     } =
         await db.storage
-            .from(MEDIA_BUCKET)
+            .from(
+                MEDIA_BUCKET
+            )
             .upload(
                 filePath,
                 file,
                 {
+
                     cacheControl:
                         "3600",
 
@@ -2079,6 +2526,7 @@ async function uploadMedia(
 
                     contentType:
                         file.type
+
                 }
             );
 
@@ -2097,7 +2545,7 @@ async function uploadMedia(
 
 
     console.log(
-        "Upload successful:",
+        "Storage upload successful:",
         data
     );
 
@@ -2125,14 +2573,14 @@ async function uploadMedia(
     if (!publicUrl) {
 
         throw new Error(
-            "Could not generate public URL."
+            "Could not create public URL."
         );
 
     }
 
 
     console.log(
-        "Public URL:",
+        "PUBLIC URL:",
         publicUrl
     );
 
@@ -2145,11 +2593,11 @@ async function uploadMedia(
         url:
             publicUrl,
 
-        type:
-            file.type,
-
         name:
             file.name,
+
+        type:
+            file.type,
 
         size:
             file.size
@@ -2160,21 +2608,447 @@ async function uploadMedia(
 
 
 /* =========================================================
-   DELETE PHOTO / VIDEO FROM STORAGE
+   LOAD GALLERY
    ========================================================= */
 
-async function deleteMedia(
+async function loadGallery() {
+
+    const gallery =
+        document.getElementById(
+            "adminGallery"
+        );
+
+
+    if (!gallery) {
+
+        return;
+
+    }
+
+
+    gallery.innerHTML = `
+
+        <div class="galleryLoading">
+
+            🔄 Loading gallery...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        /* =================================================
+           GET PHOTOS
+           ================================================= */
+
+        const {
+            data: photos,
+            error: photoError
+        } =
+            await db.storage
+                .from(
+                    MEDIA_BUCKET
+                )
+                .list(
+                    "photos",
+                    {
+
+                        limit:
+                            100,
+
+                        sortBy: {
+
+                            column:
+                                "created_at",
+
+                            order:
+                                "desc"
+
+                        }
+
+                    }
+                );
+
+
+        if (photoError) {
+
+            throw photoError;
+
+        }
+
+
+        /* =================================================
+           GET VIDEOS
+           ================================================= */
+
+        const {
+            data: videos,
+            error: videoError
+        } =
+            await db.storage
+                .from(
+                    MEDIA_BUCKET
+                )
+                .list(
+                    "videos",
+                    {
+
+                        limit:
+                            100,
+
+                        sortBy: {
+
+                            column:
+                                "created_at",
+
+                            order:
+                                "desc"
+
+                        }
+
+                    }
+                );
+
+
+        if (videoError) {
+
+            throw videoError;
+
+        }
+
+
+        const photoFiles =
+            (photos || [])
+                .filter(
+                    file =>
+                        file.name &&
+                        file.name !== ".emptyFolderPlaceholder"
+                )
+                .map(
+                    file => ({
+                        ...file,
+
+                        mediaType:
+                            "image",
+
+                        path:
+                            "photos/" +
+                            file.name
+                    })
+                );
+
+
+        const videoFiles =
+            (videos || [])
+                .filter(
+                    file =>
+                        file.name &&
+                        file.name !== ".emptyFolderPlaceholder"
+                )
+                .map(
+                    file => ({
+                        ...file,
+
+                        mediaType:
+                            "video",
+
+                        path:
+                            "videos/" +
+                            file.name
+                    })
+                );
+
+
+        const allFiles =
+            [
+                ...photoFiles,
+                ...videoFiles
+            ];
+
+
+        /* =================================================
+           SORT NEWEST FIRST
+           ================================================= */
+
+        allFiles.sort(
+            (
+                a,
+                b
+            ) => {
+
+                const dateA =
+                    new Date(
+                        a.created_at ||
+                        0
+                    ).getTime();
+
+
+                const dateB =
+                    new Date(
+                        b.created_at ||
+                        0
+                    ).getTime();
+
+
+                return dateB -
+                    dateA;
+
+            }
+        );
+
+
+        renderGallery(
+            allFiles
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LOAD GALLERY ERROR:",
+            error
+        );
+
+
+        gallery.innerHTML = `
+
+            <div class="galleryLoading">
+
+                ❌ Could not load gallery.
+
+                <br><br>
+
+                <small>
+                    ${escapeHTML(
+                        error.message ||
+                        "Unknown error"
+                    )}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER GALLERY
+   ========================================================= */
+
+function renderGallery(
+    files
+) {
+
+    const gallery =
+        document.getElementById(
+            "adminGallery"
+        );
+
+
+    if (!gallery) {
+
+        return;
+
+    }
+
+
+    if (!files.length) {
+
+        gallery.innerHTML = `
+
+            <div class="galleryLoading">
+
+                📭 No photos or videos uploaded yet.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    gallery.innerHTML =
+        files.map(
+            file => {
+
+                const {
+                    data
+                } =
+                    db.storage
+                        .from(
+                            MEDIA_BUCKET
+                        )
+                        .getPublicUrl(
+                            file.path
+                        );
+
+
+                const publicUrl =
+                    data?.publicUrl ||
+                    "";
+
+
+                const fileName =
+                    file.name ||
+                    "Media";
+
+
+                const date =
+                    formatDate(
+                        file.created_at
+                    );
+
+
+                if (
+                    file.mediaType ===
+                    "video"
+                ) {
+
+                    return `
+
+                        <div
+                            class="galleryItem">
+
+                            <div
+                                class="galleryMedia">
+
+                                <video
+                                    src="${escapeHTML(publicUrl)}"
+                                    controls
+                                    preload="metadata">
+                                </video>
+
+                            </div>
+
+
+                            <div
+                                class="galleryInfo">
+
+                                <strong>
+                                    🎥 Video
+                                </strong>
+
+                                <span>
+                                    ${escapeHTML(fileName)}
+                                </span>
+
+                                <small>
+                                    ${date}
+                                </small>
+
+                            </div>
+
+
+                            <button
+                                class="delete-btn"
+                                type="button"
+                                onclick="deleteGalleryFile('${escapeHTML(file.path)}')">
+
+                                🗑️ Delete
+
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                return `
+
+                    <div
+                        class="galleryItem">
+
+                        <div
+                            class="galleryMedia">
+
+                            <img
+                                src="${escapeHTML(publicUrl)}"
+                                alt="${escapeHTML(fileName)}"
+                                loading="lazy">
+
+                        </div>
+
+
+                        <div
+                            class="galleryInfo">
+
+                            <strong>
+                                📸 Photo
+                            </strong>
+
+                            <span>
+                                ${escapeHTML(fileName)}
+                            </span>
+
+                            <small>
+                                ${date}
+                            </small>
+
+                        </div>
+
+
+                        <button
+                            class="delete-btn"
+                            type="button"
+                            onclick="deleteGalleryFile('${escapeHTML(file.path)}')">
+
+                            🗑️ Delete
+
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   DELETE GALLERY FILE
+   ========================================================= */
+
+async function deleteGalleryFile(
     filePath
 ) {
 
     if (!filePath) {
 
-        return false;
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this media?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
 
     }
 
 
     try {
+
+        showToast(
+            "Deleting media..."
+        );
+
 
         const {
             error
@@ -2190,172 +3064,31 @@ async function deleteMedia(
 
         if (error) {
 
-            console.error(
-                "DELETE MEDIA ERROR:",
-                error
-            );
-
-            return false;
-
-        }
-
-
-        console.log(
-            "Media deleted:",
-            filePath
-        );
-
-
-        return true;
-
-
-    } catch (error) {
-
-        console.error(
-            "DELETE MEDIA EXCEPTION:",
-            error
-        );
-
-
-        return false;
-
-    }
-
-}
-
-
-/* =========================================================
-   PHOTO UPLOAD HANDLER
-   ========================================================= */
-
-async function handlePhotoUpload(
-    inputId,
-    previewId = null,
-    folder = "photos"
-) {
-
-    const input =
-        document.getElementById(
-            inputId
-        );
-
-
-    if (!input) {
-
-        console.error(
-            "Photo input not found:",
-            inputId
-        );
-
-
-        showToast(
-            "Photo input not found."
-        );
-
-
-        return null;
-
-    }
-
-
-    const file =
-        input.files?.[0];
-
-
-    if (!file) {
-
-        showToast(
-            "Please select a photo."
-        );
-
-
-        return null;
-
-    }
-
-
-    if (
-        !file.type.startsWith(
-            "image/"
-        )
-    ) {
-
-        showToast(
-            "Please select a valid image."
-        );
-
-
-        return null;
-
-    }
-
-
-    try {
-
-        showToast(
-            "📤 Uploading photo..."
-        );
-
-
-        const result =
-            await uploadMedia(
-                file,
-                folder
-            );
-
-
-        /* ---------- PREVIEW ---------- */
-
-        if (previewId) {
-
-            const preview =
-                document.getElementById(
-                    previewId
-                );
-
-
-            if (preview) {
-
-                preview.src =
-                    result.url;
-
-                preview.style.display =
-                    "block";
-
-            }
+            throw error;
 
         }
 
 
         showToast(
-            "✅ Photo uploaded successfully!"
+            "Media deleted successfully."
         );
 
 
-        console.log(
-            "PHOTO RESULT:",
-            result
-        );
-
-
-        return result;
+        await loadGallery();
 
 
     } catch (error) {
 
         console.error(
-            "PHOTO UPLOAD ERROR:",
+            "DELETE MEDIA ERROR:",
             error
         );
 
 
         showToast(
             error.message ||
-            "Photo upload failed."
+            "Could not delete media."
         );
-
-
-        return null;
 
     }
 
@@ -2363,346 +3096,97 @@ async function handlePhotoUpload(
 
 
 /* =========================================================
-   VIDEO UPLOAD HANDLER
+   UPLOAD MESSAGE
    ========================================================= */
 
-async function handleVideoUpload(
-    inputId,
-    previewId = null,
-    folder = "videos"
+function setUploadMessage(
+    message,
+    type = ""
 ) {
 
-    const input =
+    const element =
         document.getElementById(
-            inputId
+            "uploadMessage"
         );
 
 
-    if (!input) {
-
-        console.error(
-            "Video input not found:",
-            inputId
-        );
-
-
-        showToast(
-            "Video input not found."
-        );
-
-
-        return null;
-
-    }
-
-
-    const file =
-        input.files?.[0];
-
-
-    if (!file) {
-
-        showToast(
-            "Please select a video."
-        );
-
-
-        return null;
-
-    }
-
-
-    if (
-        !file.type.startsWith(
-            "video/"
-        )
-    ) {
-
-        showToast(
-            "Please select a valid video."
-        );
-
-
-        return null;
-
-    }
-
-
-    try {
-
-        showToast(
-            "📤 Uploading video..."
-        );
-
-
-        const result =
-            await uploadMedia(
-                file,
-                folder
-            );
-
-
-        /* ---------- VIDEO PREVIEW ---------- */
-
-        if (previewId) {
-
-            const preview =
-                document.getElementById(
-                    previewId
-                );
-
-
-            if (preview) {
-
-                preview.src =
-                    result.url;
-
-                preview.style.display =
-                    "block";
-
-                preview.load();
-
-            }
-
-        }
-
-
-        showToast(
-            "✅ Video uploaded successfully!"
-        );
-
-
-        console.log(
-            "VIDEO RESULT:",
-            result
-        );
-
-
-        return result;
-
-
-    } catch (error) {
-
-        console.error(
-            "VIDEO UPLOAD ERROR:",
-            error
-        );
-
-
-        showToast(
-            error.message ||
-            "Video upload failed."
-        );
-
-
-        return null;
-
-    }
-
-}
-
-
-/* =========================================================
-   PHOTO PREVIEW
-   ========================================================= */
-
-function setupPhotoPreview(
-    inputId,
-    previewId
-) {
-
-    const input =
-        document.getElementById(
-            inputId
-        );
-
-
-    const preview =
-        document.getElementById(
-            previewId
-        );
-
-
-    if (!input || !preview) {
+    if (!element) {
 
         return;
 
     }
 
 
-    input.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                input.files?.[0];
+    element.textContent =
+        message;
 
 
-            if (!file) {
-
-                preview.style.display =
-                    "none";
-
-                return;
-
-            }
+    element.className =
+        "message";
 
 
-            if (
-                !file.type.startsWith(
-                    "image/"
-                )
-            ) {
+    if (type) {
 
-                preview.style.display =
-                    "none";
+        element.classList.add(
+            type
+        );
 
-                return;
-
-            }
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                event => {
-
-                    preview.src =
-                        event.target.result;
-
-                    preview.style.display =
-                        "block";
-
-                };
-
-
-            reader.readAsDataURL(
-                file
-            );
-
-        }
-    );
+    }
 
 }
 
 
 /* =========================================================
-   VIDEO PREVIEW
+   FORMAT FILE SIZE
    ========================================================= */
 
-function setupVideoPreview(
-    inputId,
-    previewId
+function formatFileSize(
+    bytes
 ) {
 
-    const input =
-        document.getElementById(
-            inputId
-        );
+    if (!bytes) {
 
-
-    const preview =
-        document.getElementById(
-            previewId
-        );
-
-
-    if (!input || !preview) {
-
-        return;
+        return "0 Bytes";
 
     }
 
 
-    input.addEventListener(
-        "change",
-        () => {
+    const units = [
 
-            const file =
-                input.files?.[0];
+        "Bytes",
 
+        "KB",
 
-            if (!file) {
+        "MB",
 
-                preview.style.display =
-                    "none";
+        "GB"
 
-                return;
-
-            }
+    ];
 
 
-            if (
-                !file.type.startsWith(
-                    "video/"
-                )
-            ) {
-
-                preview.style.display =
-                    "none";
-
-                return;
-
-            }
+    const index =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
+        );
 
 
-            const videoURL =
-                URL.createObjectURL(
-                    file
-                );
+    const size =
+        bytes /
+        Math.pow(
+            1024,
+            index
+        );
 
 
-            preview.src =
-                videoURL;
-
-
-            preview.style.display =
-                "block";
-
-
-            preview.load();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SETUP MEDIA UPLOADS
-   ========================================================= */
-
-function setupMediaUploads() {
-
-    /*
-       These IDs must match your HTML.
-
-       Photo:
-       photoInput
-       photoPreview
-
-       Video:
-       videoInput
-       videoPreview
-    */
-
-
-    setupPhotoPreview(
-        "photoInput",
-        "photoPreview"
-    );
-
-
-    setupVideoPreview(
-        "videoInput",
-        "videoPreview"
-    );
-
-
-    console.log(
-        "Media upload system initialized."
+    return (
+        size.toFixed(
+            index === 0
+                ? 0
+                : 2
+        ) +
+        " " +
+        units[index]
     );
 
 }
@@ -2712,7 +3196,9 @@ function setupMediaUploads() {
    TOAST
    ========================================================= */
 
-function showToast(message) {
+function showToast(
+    message
+) {
 
     let toast =
         document.getElementById(
@@ -2792,10 +3278,12 @@ function setText(
 
 
 /* =========================================================
-   HELPER — FORMAT DATE
+   FORMAT DATE
    ========================================================= */
 
-function formatDate(date) {
+function formatDate(
+    date
+) {
 
     if (!date) {
 
@@ -2806,24 +3294,29 @@ function formatDate(date) {
 
     try {
 
-        return new Date(date)
-            .toLocaleDateString(
-                "en-IN",
-                {
-                    day:
-                        "2-digit",
+        return new Date(
+            date
+        ).toLocaleDateString(
+            "en-IN",
+            {
 
-                    month:
-                        "short",
+                day:
+                    "2-digit",
 
-                    year:
-                        "numeric"
-                }
-            );
+                month:
+                    "short",
+
+                year:
+                    "numeric"
+
+            }
+        );
 
     } catch {
 
-        return date;
+        return String(
+            date
+        );
 
     }
 
@@ -2831,10 +3324,12 @@ function formatDate(date) {
 
 
 /* =========================================================
-   HELPER — FORMAT MONEY
+   FORMAT MONEY
    ========================================================= */
 
-function formatMoney(amount) {
+function formatMoney(
+    amount
+) {
 
     const number =
         Number(amount) ||
@@ -2844,11 +3339,13 @@ function formatMoney(amount) {
     return number.toLocaleString(
         "en-IN",
         {
+
             minimumFractionDigits:
                 0,
 
             maximumFractionDigits:
                 2
+
         }
     );
 
@@ -2856,10 +3353,12 @@ function formatMoney(amount) {
 
 
 /* =========================================================
-   HELPER — ESCAPE HTML
+   ESCAPE HTML
    ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     if (
         value === null ||
@@ -2871,7 +3370,9 @@ function escapeHTML(value) {
     }
 
 
-    return String(value)
+    return String(
+        value
+    )
 
         .replace(
             /&/g,
@@ -2930,16 +3431,12 @@ db.auth.onAuthStateChange(
             showAdminPanel();
 
 
-            /*
-             * Timeout prevents
-             * Supabase auth event
-             * from blocking UI.
-             */
-
             setTimeout(
-                () => {
+                async () => {
 
-                    loadAllData();
+                    await loadAllData();
+
+                    await loadGallery();
 
                 },
                 0
@@ -2955,6 +3452,15 @@ db.auth.onAuthStateChange(
 
             currentAdmin =
                 null;
+
+
+            members = [];
+
+            bookings = [];
+
+            payments = [];
+
+            trainers = [];
 
 
             showLoginScreen();
@@ -3013,32 +3519,24 @@ window.showToast =
    MEDIA FUNCTIONS
    ========================================================= */
 
+window.uploadSelectedMedia =
+    uploadSelectedMedia;
+
+
 window.uploadMedia =
     uploadMedia;
 
 
-window.deleteMedia =
-    deleteMedia;
+window.loadGallery =
+    loadGallery;
 
 
-window.handlePhotoUpload =
-    handlePhotoUpload;
+window.deleteGalleryFile =
+    deleteGalleryFile;
 
 
-window.handleVideoUpload =
-    handleVideoUpload;
-
-
-window.setupPhotoPreview =
-    setupPhotoPreview;
-
-
-window.setupVideoPreview =
-    setupVideoPreview;
-
-
-window.setupMediaUploads =
-    setupMediaUploads;
+window.handleFileSelection =
+    handleFileSelection;
 
 
 /* =========================================================
@@ -3054,8 +3552,7 @@ console.log(
 );
 
 console.log(
-    "Supabase URL:",
-    SUPABASE_URL
+    "Photo / Video upload system ready."
 );
 
 console.log(
