@@ -1,6 +1,7 @@
 /* =========================================================
    RAY SPORTS CLUB — ADMIN PANEL
    Supabase Admin Dashboard
+   WITH PHOTO / VIDEO UPLOAD
    ========================================================= */
 
 
@@ -8,17 +9,28 @@
    SUPABASE CONFIG
    ========================================================= */
 
-const SUPABASE_URL = "https://xkdqxtxfkgbrmbotazel.supabase.co";
+const SUPABASE_URL =
+    "https://xkdqxtxfkgbrmbotazel.supabase.co";
 
 const SUPABASE_ANON_KEY =
     "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
 
+
 const { createClient } = supabase;
+
 
 const db = createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
+
+
+/* =========================================================
+   STORAGE CONFIG
+   ========================================================= */
+
+const MEDIA_BUCKET =
+    "club-media";
 
 
 /* =========================================================
@@ -32,31 +44,55 @@ let bookings = [];
 let payments = [];
 let trainers = [];
 
-let currentSection = "dashboard";
+let currentSection =
+    "dashboard";
 
 
 /* =========================================================
    PAGE LOAD
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-    console.log("=================================");
-    console.log("Ray Sports Club Admin Panel Loaded");
-    console.log("Supabase client:", db);
-    console.log("=================================");
+        console.log(
+            "================================="
+        );
 
-    setupNavigation();
+        console.log(
+            "Ray Sports Club Admin Panel Loaded"
+        );
 
-    setupLogout();
+        console.log(
+            "Supabase client:",
+            db
+        );
 
-    setupForms();
+        console.log(
+            "Storage bucket:",
+            MEDIA_BUCKET
+        );
 
-    setupMediaUploads();
+        console.log(
+            "================================="
+        );
 
-    await checkAdminSession();
 
-});
+        setupNavigation();
+
+        setupLogout();
+
+        setupForms();
+
+        setupMediaUploads();
+
+
+        await checkAdminSession();
+
+    }
+);
+
 
 /* =========================================================
    CHECK ADMIN SESSION
@@ -71,27 +107,47 @@ async function checkAdminSession() {
             error
         } = await db.auth.getSession();
 
+
         if (error) {
-            console.error("Session error:", error);
+
+            console.error(
+                "Session error:",
+                error
+            );
+
             showLoginScreen();
+
             return;
+
         }
 
-        const session = data?.session;
+
+        const session =
+            data?.session;
+
 
         if (session) {
 
-            console.log("Existing admin session found.");
+            console.log(
+                "Existing admin session found."
+            );
 
-            currentAdmin = session.user;
+
+            currentAdmin =
+                session.user;
+
 
             showAdminPanel();
+
 
             await loadAllData();
 
         } else {
 
-            console.log("No admin session.");
+            console.log(
+                "No admin session."
+            );
+
 
             showLoginScreen();
 
@@ -99,7 +155,11 @@ async function checkAdminSession() {
 
     } catch (error) {
 
-        console.error("CHECK SESSION ERROR:", error);
+        console.error(
+            "CHECK SESSION ERROR:",
+            error
+        );
+
 
         showLoginScreen();
 
@@ -114,15 +174,31 @@ async function checkAdminSession() {
 
 function showLoginScreen() {
 
-    const login = document.getElementById("loginBox");
-    const panel = document.getElementById("dashboard");
+    const login =
+        document.getElementById(
+            "loginBox"
+        );
+
+
+    const panel =
+        document.getElementById(
+            "dashboard"
+        );
+
 
     if (login) {
-        login.style.display = "block";
+
+        login.style.display =
+            "block";
+
     }
 
+
     if (panel) {
-        panel.style.display = "none";
+
+        panel.style.display =
+            "none";
+
     }
 
 }
@@ -134,16 +210,33 @@ function showLoginScreen() {
 
 function showAdminPanel() {
 
-    const login = document.getElementById("loginBox");
-    const panel = document.getElementById("dashboard");
+    const login =
+        document.getElementById(
+            "loginBox"
+        );
+
+
+    const panel =
+        document.getElementById(
+            "dashboard"
+        );
+
 
     if (login) {
-        login.style.display = "none";
+
+        login.style.display =
+            "none";
+
     }
 
+
     if (panel) {
-        panel.style.display = "block";
+
+        panel.style.display =
+            "block";
+
     }
+
 
     updateAdminInfo();
 
@@ -157,24 +250,40 @@ function showAdminPanel() {
 async function adminLogin(event) {
 
     if (event) {
+
         event.preventDefault();
+
     }
 
+
     const emailInput =
-        document.getElementById("email");
+        document.getElementById(
+            "email"
+        );
+
 
     const passwordInput =
-        document.getElementById("password");
+        document.getElementById(
+            "password"
+        );
+
 
     const message =
-        document.getElementById("loginMessage");
+        document.getElementById(
+            "loginMessage"
+        );
+
 
     const button =
-        document.getElementById("loginBtn");
+        document.getElementById(
+            "loginBtn"
+        );
 
 
     const email =
-        emailInput?.value.trim();
+        emailInput?.value
+            .trim();
+
 
     const password =
         passwordInput?.value;
@@ -203,7 +312,8 @@ async function adminLogin(event) {
 
         if (button) {
 
-            button.disabled = true;
+            button.disabled =
+                true;
 
             button.textContent =
                 "⏳ Logging in...";
@@ -233,13 +343,14 @@ async function adminLogin(event) {
         const {
             data,
             error
-        } = await db.auth.signInWithPassword({
+        } =
+            await db.auth.signInWithPassword({
 
-            email: email,
+                email: email,
 
-            password: password
+                password: password
 
-        });
+            });
 
 
         if (error) {
@@ -270,12 +381,8 @@ async function adminLogin(event) {
         }
 
 
-        /* ---------- SHOW ADMIN ---------- */
-
         showAdminPanel();
 
-
-        /* ---------- LOAD DATA ---------- */
 
         await loadAllData();
 
@@ -303,7 +410,8 @@ async function adminLogin(event) {
 
         if (button) {
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.textContent =
                 "🔐 Login";
@@ -327,23 +435,35 @@ async function logout() {
             error
         } = await db.auth.signOut();
 
+
         if (error) {
 
             throw error;
 
         }
 
-        currentAdmin = null;
+
+        currentAdmin =
+            null;
+
 
         members = [];
+
         bookings = [];
+
         payments = [];
+
         trainers = [];
+
 
         showLoginScreen();
 
+
         const message =
-            document.getElementById("loginMessage");
+            document.getElementById(
+                "loginMessage"
+            );
+
 
         if (message) {
 
@@ -355,11 +475,18 @@ async function logout() {
 
         }
 
+
         const password =
-            document.getElementById("password");
+            document.getElementById(
+                "password"
+            );
+
 
         if (password) {
-            password.value = "";
+
+            password.value =
+                "";
+
         }
 
 
@@ -374,6 +501,7 @@ async function logout() {
             "LOGOUT ERROR:",
             error
         );
+
 
         showToast(
             "Logout failed."
@@ -391,7 +519,9 @@ async function logout() {
 function setupForms() {
 
     const loginButton =
-        document.getElementById("loginBtn");
+        document.getElementById(
+            "loginBtn"
+        );
 
 
     if (loginButton) {
@@ -400,6 +530,7 @@ function setupForms() {
             "click",
             adminLogin
         );
+
 
         console.log(
             "Login button handler attached."
@@ -414,35 +545,46 @@ function setupForms() {
     }
 
 
-    /* Allow ENTER key to login */
-
     const email =
-        document.getElementById("email");
-
-    const password =
-        document.getElementById("password");
-
-
-    [email, password].forEach(input => {
-
-        if (!input) return;
-
-        input.addEventListener(
-            "keydown",
-            event => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    adminLogin(event);
-
-                }
-
-            }
+        document.getElementById(
+            "email"
         );
 
-    });
+
+    const password =
+        document.getElementById(
+            "password"
+        );
+
+
+    [email, password].forEach(
+        input => {
+
+            if (!input) {
+                return;
+            }
+
+
+            input.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key ===
+                        "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        adminLogin(event);
+
+                    }
+
+                }
+            );
+
+        }
+    );
 
 }
 
@@ -459,14 +601,16 @@ function setupLogout() {
         );
 
 
-    logoutButtons.forEach(button => {
+    logoutButtons.forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            logout
-        );
+            button.addEventListener(
+                "click",
+                logout
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -483,27 +627,30 @@ function setupNavigation() {
         );
 
 
-    navButtons.forEach(button => {
+    navButtons.forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                const section =
-                    button.dataset.section;
+                    const section =
+                        button.dataset.section;
 
-                if (section) {
 
-                    switchSection(
-                        section
-                    );
+                    if (section) {
+
+                        switchSection(
+                            section
+                        );
+
+                    }
 
                 }
+            );
 
-            }
-        );
-
-    });
+        }
+    );
 
 }
 
@@ -512,7 +659,9 @@ function setupNavigation() {
    SWITCH SECTION
    ========================================================= */
 
-function switchSection(sectionName) {
+function switchSection(
+    sectionName
+) {
 
     currentSection =
         sectionName;
@@ -524,12 +673,14 @@ function switchSection(sectionName) {
         );
 
 
-    sections.forEach(section => {
+    sections.forEach(
+        section => {
 
-        section.style.display =
-            "none";
+            section.style.display =
+                "none";
 
-    });
+        }
+    );
 
 
     const target =
@@ -552,25 +703,27 @@ function switchSection(sectionName) {
         );
 
 
-    navItems.forEach(item => {
+    navItems.forEach(
+        item => {
 
-        item.classList.remove(
-            "active"
-        );
-
-
-        if (
-            item.dataset.section ===
-            sectionName
-        ) {
-
-            item.classList.add(
+            item.classList.remove(
                 "active"
             );
 
-        }
 
-    });
+            if (
+                item.dataset.section ===
+                sectionName
+            ) {
+
+                item.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
 
 }
 
@@ -582,7 +735,9 @@ function switchSection(sectionName) {
 function updateAdminInfo() {
 
     if (!currentAdmin) {
+
         return;
+
     }
 
 
@@ -608,16 +763,18 @@ function updateAdminInfo() {
     ];
 
 
-    elements.forEach(element => {
+    elements.forEach(
+        element => {
 
-        if (element) {
+            if (element) {
 
-            element.textContent =
-                email;
+                element.textContent =
+                    email;
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -662,15 +819,16 @@ async function loadMembers() {
         const {
             data,
             error
-        } = await db
-            .from("members")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await db
+                .from("members")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (error) {
@@ -721,15 +879,16 @@ async function loadBookings() {
         const {
             data,
             error
-        } = await db
-            .from("bookings")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await db
+                .from("bookings")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (error) {
@@ -780,15 +939,16 @@ async function loadPayments() {
         const {
             data,
             error
-        } = await db
-            .from("payments")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await db
+                .from("payments")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (error) {
@@ -839,15 +999,16 @@ async function loadTrainers() {
         const {
             data,
             error
-        } = await db
-            .from("trainers")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await db
+                .from("trainers")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (error) {
@@ -925,10 +1086,12 @@ function updateStatistics() {
         memberCount
     );
 
+
     setText(
         "membersCount",
         memberCount
     );
+
 
     setText(
         "totalMembers",
@@ -941,10 +1104,12 @@ function updateStatistics() {
         bookingCount
     );
 
+
     setText(
         "bookingsCount",
         bookingCount
     );
+
 
     setText(
         "totalBookings",
@@ -957,6 +1122,7 @@ function updateStatistics() {
         paymentCount
     );
 
+
     setText(
         "paymentsCount",
         paymentCount
@@ -967,6 +1133,7 @@ function updateStatistics() {
         "trainerCount",
         trainerCount
     );
+
 
     setText(
         "trainersCount",
@@ -989,7 +1156,9 @@ function renderMembers() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -1055,12 +1224,14 @@ function renderMembers() {
                         </td>
 
                         <td>
+
                             <button
                                 class="delete-btn"
-                                onclick="deleteMember('${member.id}')"
+                                onclick="deleteMember('${escapeHTML(member.id)}')"
                             >
                                 🗑️ Delete
                             </button>
+
                         </td>
 
                     </tr>
@@ -1085,7 +1256,9 @@ function renderBookings() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -1152,12 +1325,14 @@ function renderBookings() {
                         </td>
 
                         <td>
+
                             <button
                                 class="delete-btn"
-                                onclick="deleteBooking('${booking.id}')"
+                                onclick="deleteBooking('${escapeHTML(booking.id)}')"
                             >
                                 🗑️ Delete
                             </button>
+
                         </td>
 
                     </tr>
@@ -1182,7 +1357,9 @@ function renderPayments() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -1248,12 +1425,14 @@ function renderPayments() {
                         </td>
 
                         <td>
+
                             <button
                                 class="delete-btn"
-                                onclick="deletePayment('${payment.id}')"
+                                onclick="deletePayment('${escapeHTML(payment.id)}')"
                             >
                                 🗑️ Delete
                             </button>
+
                         </td>
 
                     </tr>
@@ -1278,7 +1457,9 @@ function renderTrainers() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -1338,12 +1519,14 @@ function renderTrainers() {
                         </td>
 
                         <td>
+
                             <button
                                 class="delete-btn"
-                                onclick="deleteTrainer('${trainer.id}')"
+                                onclick="deleteTrainer('${escapeHTML(trainer.id)}')"
                             >
                                 🗑️ Delete
                             </button>
+
                         </td>
 
                     </tr>
@@ -1376,13 +1559,14 @@ async function deleteMember(id) {
 
         const {
             error
-        } = await db
-            .from("members")
-            .delete()
-            .eq(
-                "id",
-                id
-            );
+        } =
+            await db
+                .from("members")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
 
 
         if (error) {
@@ -1408,6 +1592,7 @@ async function deleteMember(id) {
             "DELETE MEMBER ERROR:",
             error
         );
+
 
         showToast(
             "Could not delete member."
@@ -1439,13 +1624,14 @@ async function deleteBooking(id) {
 
         const {
             error
-        } = await db
-            .from("bookings")
-            .delete()
-            .eq(
-                "id",
-                id
-            );
+        } =
+            await db
+                .from("bookings")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
 
 
         if (error) {
@@ -1471,6 +1657,7 @@ async function deleteBooking(id) {
             "DELETE BOOKING ERROR:",
             error
         );
+
 
         showToast(
             "Could not delete booking."
@@ -1502,13 +1689,14 @@ async function deletePayment(id) {
 
         const {
             error
-        } = await db
-            .from("payments")
-            .delete()
-            .eq(
-                "id",
-                id
-            );
+        } =
+            await db
+                .from("payments")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
 
 
         if (error) {
@@ -1534,6 +1722,7 @@ async function deletePayment(id) {
             "DELETE PAYMENT ERROR:",
             error
         );
+
 
         showToast(
             "Could not delete payment."
@@ -1565,13 +1754,14 @@ async function deleteTrainer(id) {
 
         const {
             error
-        } = await db
-            .from("trainers")
-            .delete()
-            .eq(
-                "id",
-                id
-            );
+        } =
+            await db
+                .from("trainers")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
 
 
         if (error) {
@@ -1598,6 +1788,7 @@ async function deleteTrainer(id) {
             error
         );
 
+
         showToast(
             "Could not delete trainer."
         );
@@ -1620,15 +1811,16 @@ async function updateBookingStatus(
 
         const {
             error
-        } = await db
-            .from("bookings")
-            .update({
-                status: status
-            })
-            .eq(
-                "id",
-                id
-            );
+        } =
+            await db
+                .from("bookings")
+                .update({
+                    status: status
+                })
+                .eq(
+                    "id",
+                    id
+                );
 
 
         if (error) {
@@ -1653,6 +1845,7 @@ async function updateBookingStatus(
             error
         );
 
+
         showToast(
             "Could not update booking."
         );
@@ -1676,6 +1869,7 @@ function searchTable(
             inputId
         );
 
+
     const table =
         document.getElementById(
             tableId
@@ -1683,7 +1877,9 @@ function searchTable(
 
 
     if (!input || !table) {
+
         return;
+
     }
 
 
@@ -1699,334 +1895,72 @@ function searchTable(
         );
 
 
-    rows.forEach(row => {
+    rows.forEach(
+        row => {
 
-        const text =
-            row.textContent
-                .toLowerCase();
-
-
-        row.style.display =
-            text.includes(search)
-                ? ""
-                : "none";
-
-    });
-
-}
+            const text =
+                row.textContent
+                    .toLowerCase();
 
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+            row.style.display =
+                text.includes(search)
+                    ? ""
+                    : "none";
 
-function showToast(message) {
-
-    let toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    if (!toast) {
-
-        toast =
-            document.createElement(
-                "div"
-            );
-
-        toast.id =
-            "toast";
-
-        toast.className =
-            "toast";
-
-        document.body.appendChild(
-            toast
-        );
-
-    }
-
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
+        }
     );
 
-
-    setTimeout(() => {
-
-        toast.classList.remove(
-            "show"
-        );
-
-    }, 3000);
-
 }
 
 
 /* =========================================================
-   HELPER — SET TEXT
+   SUPABASE STORAGE
+   PHOTO / VIDEO UPLOAD
    ========================================================= */
 
-function setText(
-    id,
-    value
+async function uploadMedia(
+    file,
+    folder = "uploads"
 ) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-/* =========================================================
-   HELPER — FORMAT DATE
-   ========================================================= */
-
-function formatDate(date) {
-
-    if (!date) {
-        return "-";
-    }
-
-
-    try {
-
-        return new Date(date)
-            .toLocaleDateString(
-                "en-IN",
-                {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric"
-                }
-            );
-
-    } catch {
-
-        return date;
-
-    }
-
-}
-
-
-/* =========================================================
-   HELPER — FORMAT MONEY
-   ========================================================= */
-
-function formatMoney(amount) {
-
-    const number =
-        Number(amount) || 0;
-
-
-    return number.toLocaleString(
-        "en-IN",
-        {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        }
-    );
-
-}
-
-
-/* =========================================================
-   HELPER — ESCAPE HTML
-   ========================================================= */
-
-function escapeHTML(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
-    }
-
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   AUTH STATE LISTENER
-   ========================================================= */
-
-db.auth.onAuthStateChange(
-    async (event, session) => {
-
-        console.log(
-            "Auth event:",
-            event
-        );
-
-
-        if (
-            event ===
-            "SIGNED_IN"
-        ) {
-
-            currentAdmin =
-                session?.user || null;
-
-
-            showAdminPanel();
-
-
-            /*
-             * Small timeout prevents
-             * Supabase auth event from
-             * blocking the UI.
-             */
-
-            setTimeout(
-                () => {
-                    loadAllData();
-                },
-                0
-            );
-
-        }
-
-
-        if (
-            event ===
-            "SIGNED_OUT"
-        ) {
-
-            currentAdmin =
-                null;
-
-            showLoginScreen();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   EXPOSE FUNCTIONS TO HTML
-   ========================================================= */
-
-window.adminLogin =
-    adminLogin;
-
-window.logout =
-    logout;
-
-window.switchSection =
-    switchSection;
-
-window.deleteMember =
-    deleteMember;
-
-window.deleteBooking =
-    deleteBooking;
-
-window.deletePayment =
-    deletePayment;
-
-window.deleteTrainer =
-    deleteTrainer;
-
-window.updateBookingStatus =
-    updateBookingStatus;
-
-window.searchTable =
-    searchTable;
-
-window.showToast =
-    showToast;
-
-/* =========================================================
-   SUPABASE STORAGE — PHOTO / VIDEO UPLOAD
-   ========================================================= */
-
-/*
-   STORAGE BUCKET
-
-   Create this bucket in:
-   Supabase Dashboard
-   → Storage
-   → New Bucket
-   → club-media
-
-   For a public website, make the bucket PUBLIC.
-*/
-
-const MEDIA_BUCKET = "club-media";
-
-
-/* =========================================================
-   UPLOAD FILE TO SUPABASE STORAGE
-   ========================================================= */
-
-async function uploadMedia(file, folder = "uploads") {
 
     if (!file) {
 
-        throw new Error("Please select a file.");
+        throw new Error(
+            "Please select a file."
+        );
 
     }
 
 
-    /* ---------- CHECK FILE TYPE ---------- */
+    /* =====================================================
+       ALLOWED FILE TYPES
+       ===================================================== */
 
     const allowedTypes = [
 
         "image/jpeg",
+
         "image/png",
+
         "image/webp",
+
         "image/gif",
 
         "video/mp4",
+
         "video/webm",
+
         "video/quicktime"
 
     ];
 
 
-    if (!allowedTypes.includes(file.type)) {
+    if (
+        !allowedTypes.includes(
+            file.type
+        )
+    ) {
 
         throw new Error(
             "Only JPG, PNG, WEBP, GIF, MP4, WEBM and MOV files are allowed."
@@ -2035,15 +1969,24 @@ async function uploadMedia(file, folder = "uploads") {
     }
 
 
-    /* ---------- FILE SIZE ---------- */
+    /* =====================================================
+       FILE SIZE LIMIT
+       ===================================================== */
 
-    const maxImageSize = 10 * 1024 * 1024; // 10 MB
-    const maxVideoSize = 100 * 1024 * 1024; // 100 MB
+    const maxImageSize =
+        10 * 1024 * 1024;
+
+
+    const maxVideoSize =
+        100 * 1024 * 1024;
 
 
     if (
-        file.type.startsWith("image/") &&
-        file.size > maxImageSize
+        file.type.startsWith(
+            "image/"
+        ) &&
+        file.size >
+        maxImageSize
     ) {
 
         throw new Error(
@@ -2054,8 +1997,11 @@ async function uploadMedia(file, folder = "uploads") {
 
 
     if (
-        file.type.startsWith("video/") &&
-        file.size > maxVideoSize
+        file.type.startsWith(
+            "video/"
+        ) &&
+        file.size >
+        maxVideoSize
     ) {
 
         throw new Error(
@@ -2065,53 +2011,76 @@ async function uploadMedia(file, folder = "uploads") {
     }
 
 
-    /* ---------- CREATE UNIQUE FILE NAME ---------- */
+    /* =====================================================
+       FILE EXTENSION
+       ===================================================== */
 
-    const extension =
+    let extension =
         file.name
             .split(".")
             .pop()
             .toLowerCase();
 
 
+    /* =====================================================
+       UNIQUE FILE NAME
+       ===================================================== */
+
     const uniqueName =
+
         Date.now() +
         "_" +
         Math.random()
             .toString(36)
-            .substring(2, 10) +
+            .substring(2, 12) +
         "." +
         extension;
 
 
+    const cleanFolder =
+        String(folder)
+            .replace(
+                /^\/+|\/+$/g,
+                ""
+            );
+
+
     const filePath =
-        folder +
+        cleanFolder +
         "/" +
         uniqueName;
 
 
     console.log(
-        "Uploading:",
+        "Uploading file:",
         filePath
     );
 
 
-    /* ---------- UPLOAD ---------- */
+    /* =====================================================
+       UPLOAD
+       ===================================================== */
 
     const {
         data,
         error
-    } = await db.storage
-        .from(MEDIA_BUCKET)
-        .upload(
-            filePath,
-            file,
-            {
-                cacheControl: "3600",
-                upsert: false,
-                contentType: file.type
-            }
-        );
+    } =
+        await db.storage
+            .from(MEDIA_BUCKET)
+            .upload(
+                filePath,
+                file,
+                {
+                    cacheControl:
+                        "3600",
+
+                    upsert:
+                        false,
+
+                    contentType:
+                        file.type
+                }
+            );
 
 
     if (error) {
@@ -2120,6 +2089,7 @@ async function uploadMedia(file, folder = "uploads") {
             "SUPABASE STORAGE ERROR:",
             error
         );
+
 
         throw error;
 
@@ -2132,13 +2102,20 @@ async function uploadMedia(file, folder = "uploads") {
     );
 
 
-    /* ---------- GET PUBLIC URL ---------- */
+    /* =====================================================
+       GET PUBLIC URL
+       ===================================================== */
 
     const {
         data: publicData
-    } = db.storage
-        .from(MEDIA_BUCKET)
-        .getPublicUrl(filePath);
+    } =
+        db.storage
+            .from(
+                MEDIA_BUCKET
+            )
+            .getPublicUrl(
+                filePath
+            );
 
 
     const publicUrl =
@@ -2162,13 +2139,20 @@ async function uploadMedia(file, folder = "uploads") {
 
     return {
 
-        path: filePath,
+        path:
+            filePath,
 
-        url: publicUrl,
+        url:
+            publicUrl,
 
-        type: file.type,
+        type:
+            file.type,
 
-        name: file.name
+        name:
+            file.name,
+
+        size:
+            file.size
 
     };
 
@@ -2176,13 +2160,17 @@ async function uploadMedia(file, folder = "uploads") {
 
 
 /* =========================================================
-   DELETE MEDIA FROM STORAGE
+   DELETE PHOTO / VIDEO FROM STORAGE
    ========================================================= */
 
-async function deleteMedia(filePath) {
+async function deleteMedia(
+    filePath
+) {
 
     if (!filePath) {
-        return;
+
+        return false;
+
     }
 
 
@@ -2190,11 +2178,14 @@ async function deleteMedia(filePath) {
 
         const {
             error
-        } = await db.storage
-            .from(MEDIA_BUCKET)
-            .remove([
-                filePath
-            ]);
+        } =
+            await db.storage
+                .from(
+                    MEDIA_BUCKET
+                )
+                .remove([
+                    filePath
+                ]);
 
 
         if (error) {
@@ -2225,6 +2216,7 @@ async function deleteMedia(filePath) {
             error
         );
 
+
         return false;
 
     }
@@ -2233,7 +2225,7 @@ async function deleteMedia(filePath) {
 
 
 /* =========================================================
-   HANDLE PHOTO UPLOAD
+   PHOTO UPLOAD HANDLER
    ========================================================= */
 
 async function handlePhotoUpload(
@@ -2250,10 +2242,16 @@ async function handlePhotoUpload(
 
     if (!input) {
 
-        console.warn(
+        console.error(
             "Photo input not found:",
             inputId
         );
+
+
+        showToast(
+            "Photo input not found."
+        );
+
 
         return null;
 
@@ -2270,6 +2268,23 @@ async function handlePhotoUpload(
             "Please select a photo."
         );
 
+
+        return null;
+
+    }
+
+
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        showToast(
+            "Please select a valid image."
+        );
+
+
         return null;
 
     }
@@ -2278,7 +2293,7 @@ async function handlePhotoUpload(
     try {
 
         showToast(
-            "Uploading photo..."
+            "📤 Uploading photo..."
         );
 
 
@@ -2313,7 +2328,13 @@ async function handlePhotoUpload(
 
 
         showToast(
-            "Photo uploaded successfully!"
+            "✅ Photo uploaded successfully!"
+        );
+
+
+        console.log(
+            "PHOTO RESULT:",
+            result
         );
 
 
@@ -2342,7 +2363,7 @@ async function handlePhotoUpload(
 
 
 /* =========================================================
-   HANDLE VIDEO UPLOAD
+   VIDEO UPLOAD HANDLER
    ========================================================= */
 
 async function handleVideoUpload(
@@ -2359,10 +2380,16 @@ async function handleVideoUpload(
 
     if (!input) {
 
-        console.warn(
+        console.error(
             "Video input not found:",
             inputId
         );
+
+
+        showToast(
+            "Video input not found."
+        );
+
 
         return null;
 
@@ -2379,6 +2406,23 @@ async function handleVideoUpload(
             "Please select a video."
         );
 
+
+        return null;
+
+    }
+
+
+    if (
+        !file.type.startsWith(
+            "video/"
+        )
+    ) {
+
+        showToast(
+            "Please select a valid video."
+        );
+
+
         return null;
 
     }
@@ -2387,7 +2431,7 @@ async function handleVideoUpload(
     try {
 
         showToast(
-            "Uploading video..."
+            "📤 Uploading video..."
         );
 
 
@@ -2424,7 +2468,13 @@ async function handleVideoUpload(
 
 
         showToast(
-            "Video uploaded successfully!"
+            "✅ Video uploaded successfully!"
+        );
+
+
+        console.log(
+            "VIDEO RESULT:",
+            result
         );
 
 
@@ -2453,7 +2503,7 @@ async function handleVideoUpload(
 
 
 /* =========================================================
-   AUTOMATIC PHOTO PREVIEW
+   PHOTO PREVIEW
    ========================================================= */
 
 function setupPhotoPreview(
@@ -2466,6 +2516,7 @@ function setupPhotoPreview(
             inputId
         );
 
+
     const preview =
         document.getElementById(
             previewId
@@ -2473,7 +2524,9 @@ function setupPhotoPreview(
 
 
     if (!input || !preview) {
+
         return;
+
     }
 
 
@@ -2500,6 +2553,9 @@ function setupPhotoPreview(
                     "image/"
                 )
             ) {
+
+                preview.style.display =
+                    "none";
 
                 return;
 
@@ -2533,7 +2589,7 @@ function setupPhotoPreview(
 
 
 /* =========================================================
-   AUTOMATIC VIDEO PREVIEW
+   VIDEO PREVIEW
    ========================================================= */
 
 function setupVideoPreview(
@@ -2546,6 +2602,7 @@ function setupVideoPreview(
             inputId
         );
 
+
     const preview =
         document.getElementById(
             previewId
@@ -2553,7 +2610,9 @@ function setupVideoPreview(
 
 
     if (!input || !preview) {
+
         return;
+
     }
 
 
@@ -2581,6 +2640,9 @@ function setupVideoPreview(
                 )
             ) {
 
+                preview.style.display =
+                    "none";
+
                 return;
 
             }
@@ -2595,8 +2657,12 @@ function setupVideoPreview(
             preview.src =
                 videoURL;
 
+
             preview.style.display =
                 "block";
+
+
+            preview.load();
 
         }
     );
@@ -2611,8 +2677,15 @@ function setupVideoPreview(
 function setupMediaUploads() {
 
     /*
-       CHANGE THESE IDs IF YOUR HTML
-       USES DIFFERENT IDs.
+       These IDs must match your HTML.
+
+       Photo:
+       photoInput
+       photoPreview
+
+       Video:
+       videoInput
+       videoPreview
     */
 
 
@@ -2633,9 +2706,348 @@ function setupMediaUploads() {
     );
 
 }
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+function showToast(message) {
+
+    let toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    if (!toast) {
+
+        toast =
+            document.createElement(
+                "div"
+            );
+
+
+        toast.id =
+            "toast";
+
+
+        toast.className =
+            "toast";
+
+
+        document.body.appendChild(
+            toast
+        );
+
+    }
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+/* =========================================================
+   HELPER — SET TEXT
+   ========================================================= */
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+/* =========================================================
+   HELPER — FORMAT DATE
+   ========================================================= */
+
+function formatDate(date) {
+
+    if (!date) {
+
+        return "-";
+
+    }
+
+
+    try {
+
+        return new Date(date)
+            .toLocaleDateString(
+                "en-IN",
+                {
+                    day:
+                        "2-digit",
+
+                    month:
+                        "short",
+
+                    year:
+                        "numeric"
+                }
+            );
+
+    } catch {
+
+        return date;
+
+    }
+
+}
+
+
+/* =========================================================
+   HELPER — FORMAT MONEY
+   ========================================================= */
+
+function formatMoney(amount) {
+
+    const number =
+        Number(amount) ||
+        0;
+
+
+    return number.toLocaleString(
+        "en-IN",
+        {
+            minimumFractionDigits:
+                0,
+
+            maximumFractionDigits:
+                2
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HELPER — ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   AUTH STATE LISTENER
+   ========================================================= */
+
+db.auth.onAuthStateChange(
+    async (
+        event,
+        session
+    ) => {
+
+        console.log(
+            "Auth event:",
+            event
+        );
+
+
+        if (
+            event ===
+            "SIGNED_IN"
+        ) {
+
+            currentAdmin =
+                session?.user ||
+                null;
+
+
+            showAdminPanel();
+
+
+            /*
+             * Timeout prevents
+             * Supabase auth event
+             * from blocking UI.
+             */
+
+            setTimeout(
+                () => {
+
+                    loadAllData();
+
+                },
+                0
+            );
+
+        }
+
+
+        if (
+            event ===
+            "SIGNED_OUT"
+        ) {
+
+            currentAdmin =
+                null;
+
+
+            showLoginScreen();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   EXPOSE FUNCTIONS TO HTML
+   ========================================================= */
+
+window.adminLogin =
+    adminLogin;
+
+
+window.logout =
+    logout;
+
+
+window.switchSection =
+    switchSection;
+
+
+window.deleteMember =
+    deleteMember;
+
+
+window.deleteBooking =
+    deleteBooking;
+
+
+window.deletePayment =
+    deletePayment;
+
+
+window.deleteTrainer =
+    deleteTrainer;
+
+
+window.updateBookingStatus =
+    updateBookingStatus;
+
+
+window.searchTable =
+    searchTable;
+
+
+window.showToast =
+    showToast;
+
+
+/* =========================================================
+   MEDIA FUNCTIONS
+   ========================================================= */
+
+window.uploadMedia =
+    uploadMedia;
+
+
+window.deleteMedia =
+    deleteMedia;
+
+
+window.handlePhotoUpload =
+    handlePhotoUpload;
+
+
+window.handleVideoUpload =
+    handleVideoUpload;
+
+
+window.setupPhotoPreview =
+    setupPhotoPreview;
+
+
+window.setupVideoPreview =
+    setupVideoPreview;
+
+
+window.setupMediaUploads =
+    setupMediaUploads;
+
+
 /* =========================================================
    FINAL DEBUG
    ========================================================= */
+
+console.log(
+    "================================="
+);
 
 console.log(
     "admin.js loaded successfully."
@@ -2644,4 +3056,13 @@ console.log(
 console.log(
     "Supabase URL:",
     SUPABASE_URL
+);
+
+console.log(
+    "Storage bucket:",
+    MEDIA_BUCKET
+);
+
+console.log(
+    "================================="
 );
