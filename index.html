@@ -988,6 +988,7 @@
 
     </footer>
 <script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
@@ -1141,7 +1142,306 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+/* =====================================================
+   PUBLIC SUPABASE GALLERY
+   ===================================================== */
 
+const PUBLIC_SUPABASE_URL =
+    "https://xkdqxtxfkgbrmbotazel.supabase.co";
+
+const PUBLIC_SUPABASE_KEY =
+    "sb_publishable_Y2XKqEGilp7YY2P9Kww60g_NHzrRdH4";
+
+const publicSupabase =
+    supabase.createClient(
+        PUBLIC_SUPABASE_URL,
+        PUBLIC_SUPABASE_KEY
+    );
+
+const PUBLIC_MEDIA_BUCKET =
+    "club_media";
+
+
+/* =====================================================
+   LOAD PUBLIC GALLERY
+   ===================================================== */
+
+async function loadPublicGallery() {
+
+    const gallery =
+        document.getElementById("publicGallery");
+
+    if (!gallery) {
+        return;
+    }
+
+    gallery.innerHTML = `
+        <div class="gallery-empty">
+            <div class="gallery-empty-icon">
+                ⏳
+            </div>
+
+            <h3>
+                Gallery Loading...
+            </h3>
+
+            <p>
+                Please wait...
+            </p>
+        </div>
+    `;
+
+
+    try {
+
+        /* =================================================
+           GET PHOTOS
+           ================================================= */
+
+        const {
+            data: photos,
+            error: photoError
+        } =
+            await publicSupabase
+                .storage
+                .from(PUBLIC_MEDIA_BUCKET)
+                .list("photos", {
+                    limit: 100,
+                    sortBy: {
+                        column: "created_at",
+                        order: "desc"
+                    }
+                });
+
+
+        if (photoError) {
+            throw photoError;
+        }
+
+
+        /* =================================================
+           GET VIDEOS
+           ================================================= */
+
+        const {
+            data: videos,
+            error: videoError
+        } =
+            await publicSupabase
+                .storage
+                .from(PUBLIC_MEDIA_BUCKET)
+                .list("videos", {
+                    limit: 100,
+                    sortBy: {
+                        column: "created_at",
+                        order: "desc"
+                    }
+                });
+
+
+        if (videoError) {
+            throw videoError;
+        }
+
+
+        /* =================================================
+           PREPARE PHOTOS
+           ================================================= */
+
+        const photoFiles =
+            (photos || [])
+                .filter(file =>
+                    file.name &&
+                    file.name !== ".emptyFolderPlaceholder"
+                )
+                .map(file => ({
+                    ...file,
+                    mediaType: "image",
+                    path: "photos/" + file.name
+                }));
+
+
+        /* =================================================
+           PREPARE VIDEOS
+           ================================================= */
+
+        const videoFiles =
+            (videos || [])
+                .filter(file =>
+                    file.name &&
+                    file.name !== ".emptyFolderPlaceholder"
+                )
+                .map(file => ({
+                    ...file,
+                    mediaType: "video",
+                    path: "videos/" + file.name
+                }));
+
+
+        /* =================================================
+           COMBINE
+           ================================================= */
+
+        const allFiles = [
+            ...photoFiles,
+            ...videoFiles
+        ];
+
+
+        /* =================================================
+           SORT NEWEST FIRST
+           ================================================= */
+
+        allFiles.sort((a, b) => {
+
+            const dateA =
+                new Date(
+                    a.created_at || 0
+                ).getTime();
+
+            const dateB =
+                new Date(
+                    b.created_at || 0
+                ).getTime();
+
+            return dateB - dateA;
+
+        });
+
+
+        /* =================================================
+           EMPTY GALLERY
+           ================================================= */
+
+        if (!allFiles.length) {
+
+            gallery.innerHTML = `
+                <div class="gallery-empty">
+
+                    <div class="gallery-empty-icon">
+                        📸
+                    </div>
+
+                    <h3>
+                        फोटो लवकरच उपलब्ध होतील
+                    </h3>
+
+                    <p>
+                        आमच्या क्रीडा उपक्रमांचे फोटो
+                        आणि व्हिडिओ येथे पाहता येतील.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* =================================================
+           RENDER GALLERY
+           ================================================= */
+
+        gallery.innerHTML =
+            allFiles.map(file => {
+
+                const {
+                    data
+                } =
+                    publicSupabase
+                        .storage
+                        .from(PUBLIC_MEDIA_BUCKET)
+                        .getPublicUrl(file.path);
+
+                const publicUrl =
+                    data?.publicUrl || "";
+
+
+                /* =========================
+                   VIDEO
+                   ========================= */
+
+                if (
+                    file.mediaType === "video"
+                ) {
+
+                    return `
+                        <div class="gallery-card">
+
+                            <div class="gallery-media">
+
+                                <video
+                                    src="${publicUrl}"
+                                    controls
+                                    preload="metadata"
+                                    playsinline>
+                                </video>
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+
+
+                /* =========================
+                   IMAGE
+                   ========================= */
+
+                return `
+                    <div class="gallery-card">
+
+                        <div class="gallery-media">
+
+                            <img
+                                src="${publicUrl}"
+                                alt="Motivate Sports Gallery"
+                                loading="lazy">
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "PUBLIC GALLERY ERROR:",
+            error
+        );
+
+
+        gallery.innerHTML = `
+            <div class="gallery-empty">
+
+                <div class="gallery-empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Gallery temporarily unavailable
+                </h3>
+
+                <p>
+                    Please try again later.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   START PUBLIC GALLERY
+   ===================================================== */
+
+loadPublicGallery();
     /* =====================================================
        ESC KEY CLOSES MOBILE MENU
        ===================================================== */
