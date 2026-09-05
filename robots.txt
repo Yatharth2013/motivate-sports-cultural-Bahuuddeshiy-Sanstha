@@ -1,1 +1,4 @@
+User-agent: *
+Allow: /
 
+Sitemap: https://motivate-sports-cultural-bahuuddeshiy-sanstha.vercel.app/sitemap.xml
